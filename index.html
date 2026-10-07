@@ -26,7 +26,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Anton&family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="preload" as="image" href="assets/img/logo.webp" fetchpriority="high">
   <link rel="preload" as="image" href="assets/img/hero-page1.webp">
-  <link rel="stylesheet" href="assets/css/styles.css?v=36">
+  <link rel="stylesheet" href="assets/css/styles.css?v=43">
   <script>document.documentElement.classList.add("js");if(!location.hash)document.documentElement.classList.add("has-intro")</script>
 
   <!-- Données structurées : adresse, horaires et réseaux à compléter (ne pas inventer) -->
@@ -99,7 +99,7 @@
     <button class="torch__skip" id="introSkip">Entrer <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
     <div class="torch__bar" aria-hidden="true"><span></span></div>
   </div>
-  <script src="assets/js/intro.js?v=36"></script>
+  <script src="assets/js/intro.js?v=43"></script>
   <a class="skip" href="#main">Aller au contenu</a>
 
   <!-- ============================ NAVBAR ============================ -->
@@ -114,7 +114,7 @@
         <a href="menu.html">Menu</a>
         <a href="#chapati">Chapati</a>
         <a href="#pizzas">Pizzas</a>
-        <a href="menu.html#bowls">Bol H Chapati</a>
+        <a href="#bols">Bol H Chapati</a>
         <a href="#contact">Contact</a>
       </nav>
       <a class="btn nav__cta" href="tel:+213556725681" data-order><svg class="nav__cta-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10"/><path d="M17 21V3c-2 1.5-3 4-3 7v3h3"/></svg>Commander<svg class="nav__cta-arr" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a>
@@ -131,7 +131,7 @@
       <a href="menu.html"><small>02</small>Menu</a>
       <a href="#chapati"><small>03</small>Chapati</a>
       <a href="#pizzas"><small>04</small>Pizzas</a>
-      <a href="menu.html#bowls"><small>05</small>Bol H Chapati</a>
+      <a href="#bols"><small>05</small>Bol H Chapati</a>
       <a href="#contact"><small>06</small>Contact</a>
     </nav>
     <div class="drawer__foot">
@@ -267,8 +267,45 @@
           <div class="hs__track" id="pizzaGrid"><!-- rendu par main.js --></div>
         </div>
       </div>
-      <!-- Suppléments des pizzas : petit tableau en bas à droite -->
-      <div class="container hs__foot" id="pizzaSupp"><!-- rendu par main.js --></div>
+      <!-- Bande de la couleur exacte du fond de la vidéo : vidéo à gauche, suppléments à droite -->
+      <div class="vband" data-nav="dark">
+        <div class="container vband__inner">
+          <!-- Globe de la vidéo « HOUCINE CHAPATI VIDEO » : la pizza tourne en continu (CSS), le pied reste fixe -->
+          <figure class="vband__media globe" role="img" aria-label="Pizza Hocine Chapati en forme de globe qui tourne">
+            <img class="globe__pizza" src="assets/img/globe-pizza.webp" alt="" width="380" height="380" loading="lazy" decoding="async">
+            <img class="globe__pied" src="assets/img/globe-pied.webp" alt="" width="600" height="818" loading="lazy" decoding="async">
+          </figure>
+          <div class="hs__foot vband__supp" id="pizzaSupp"><!-- rendu par main.js --></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================== BOL H CHAPATI =========================== -->
+    <section class="pizzas section section--cream bols" id="bols" data-nav="light" aria-labelledby="bols-title">
+      <div class="container">
+        <div class="sec-head">
+          <div>
+            <p class="eyebrow eyebrow--dark reveal"><span class="dot"></span>Tout dans un bol</p>
+            <h2 class="h2 reveal" id="bols-title">Bol <em class="serif">H Chapati</em></h2>
+          </div>
+          <p class="sec-head__txt reveal">Une base <b>Pasta</b> ou <b>Poutine</b>, une garniture <b>Poulet</b>, <b>Viande</b> ou <b>Mixte</b>, en taille <b>M</b>, <b>L</b> ou <b>XL</b>.</p>
+        </div>
+      </div>
+      <div class="hs" id="bolHS" aria-label="Nos Bol H Chapati">
+        <div class="hs__sticky">
+          <div class="hs__track" id="bolGrid"><!-- rendu par main.js --></div>
+        </div>
+      </div>
+      <!-- Même bande rouge que les pizzas : le Bol H tourne dans le globe à gauche, tableau à droite -->
+      <div class="vband" data-nav="dark">
+        <div class="container vband__inner">
+          <figure class="vband__media globe" role="img" aria-label="Bol H Chapati en forme de globe qui tourne">
+            <img class="globe__pizza" src="assets/img/globe-bol.webp" alt="" width="380" height="380" loading="lazy" decoding="async">
+            <img class="globe__pied" src="assets/img/globe-pied.webp" alt="" width="600" height="818" loading="lazy" decoding="async">
+          </figure>
+          <div class="hs__foot vband__supp" id="bolSupp"><!-- rendu par main.js --></div>
+        </div>
+      </div>
     </section>
 
     <!-- =========================== CHAPATIS =========================== -->
@@ -398,7 +435,7 @@
         <div><b>Hocine Chapati</b><span>Le goût qui rassemble</span></div>
       </div>
       <nav class="foot__links" aria-label="Pied de page">
-        <a href="menu.html">Menu</a><a href="#chapati">Chapati</a><a href="#pizzas">Pizzas</a><a href="menu.html#bowls">Bol H Chapati</a><a href="#contact">Contact</a>
+        <a href="menu.html">Menu</a><a href="#chapati">Chapati</a><a href="#pizzas">Pizzas</a><a href="#bols">Bol H Chapati</a><a href="#contact">Contact</a>
       </nav>
       <p class="foot__copy">© <span id="year">2026</span> Hocine Chapati. Prix en dinars algériens (DA).</p>
     </div>
@@ -410,8 +447,8 @@
     <span>Menu</span>
   </a>
 
-  <script src="assets/js/menu-data.js?v=36" defer></script>
-  <script src="assets/js/main.js?v=36" defer></script>
-  <script src="assets/js/order.js?v=36" defer></script>
+  <script src="assets/js/menu-data.js?v=43" defer></script>
+  <script src="assets/js/main.js?v=43" defer></script>
+  <script src="assets/js/order.js?v=43" defer></script>
 </body>
 </html>

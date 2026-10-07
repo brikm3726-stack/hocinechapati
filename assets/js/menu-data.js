@@ -88,6 +88,11 @@ window.HC = {
     { name: "Bol Poutine Mixte", base: "Poutine", prot: "Mixte", prices: [800, 1050, 1250] }
   ],
 
+  /* Suppléments des Bol H Chapati : prix non fournis par le client (absents de l'écran du restaurant).
+     À compléter, ex. { name: "Fromage", price: 100 }. Tant que la liste est vide,
+     l'accueil affiche à la place un tableau « Composez votre bol » (tailles, base, garniture). */
+  supplementsBol: [],
+
   formules: [
     { name: "Formule Kebab", price: 550 },
     { name: "Formule Maqloub Poulet", price: 550 },

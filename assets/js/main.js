@@ -71,12 +71,12 @@
             : `<div class="pcard__price">${it.price}<small>DA</small></div>`}
         </div>
       </article>`;
-  const suppBox = (groups) => `
+  const suppBox = (groups, title = "Suppléments", note = "à ajouter à votre commande") => `
       <div class="supbox${groups.length > 1 ? " supbox--2" : ""} reveal">
-        <h3 class="supbox__title">Suppléments <small>à ajouter à votre commande</small></h3>
+        <h3 class="supbox__title">${title} <small>${note}</small></h3>
         <div class="supbox__cols">${groups.map(([t, arr]) => `
           <div>${t ? `<p class="supbox__sub">${t}</p>` : ""}
-            <ul>${arr.map((x) => `<li><span>${esc(x.name)}</span><b>+${x.price} DA</b></li>`).join("")}</ul>
+            <ul>${arr.map((x) => `<li><span>${esc(x.name)}</span><b>${x.text ? esc(x.text) : `+${x.price} DA`}</b></li>`).join("")}</ul>
           </div>`).join("")}
         </div>
       </div>`;
@@ -156,6 +156,28 @@
       .join("");
     $("#pizzaSupp").innerHTML = suppBox([["", D.supplementsPizza]]);
     marquee($("#pizzaHS"));
+  }
+  if ($("#bolGrid")) {
+    $("#bolGrid").innerHTML = D.bowls
+      .map((b, i) => plateCard({ name: b.name, desc: `Base ${b.base.toLowerCase()}, garniture ${b.prot.toLowerCase()}.`, labels: D.bowlSizes, prices: b.prices }, i, "bol-rond"))
+      .join("");
+    const supp = D.supplementsBol || [];
+    if (supp.length) $("#bolSupp").innerHTML = suppBox([["", supp]]);
+    else {
+      // pas encore de prix de suppléments : on présente la composition du bol (vrais prix)
+      const nb = (n) => n.toLocaleString("fr-FR");
+      const range = D.bowlSizes.map((label, k) => {
+        const all = D.bowls.map((b) => b.prices[k]);
+        return { name: `Taille ${label}`, text: `${nb(Math.min(...all))} – ${nb(Math.max(...all))} DA` };
+      });
+      const base = [...new Set(D.bowls.map((b) => b.base))].join(" ou ");
+      const prot = [...new Set(D.bowls.map((b) => b.prot))].join(", ").replace(/, ([^,]*)$/, " ou $1");
+      $("#bolSupp").innerHTML = suppBox(
+        [["Tailles", range], ["Au choix", [{ name: "Base", text: base }, { name: "Garniture", text: prot }]]],
+        "Composez votre bol", "taille, base et garniture"
+      );
+    }
+    marquee($("#bolHS"));
   }
   if ($("#chapatiGrid")) {
     $("#chapatiGrid").innerHTML = [...D.chapatiS2, ...D.chapatiOriginal]
@@ -343,10 +365,10 @@
     const y = scrollY;
     nav.classList.toggle("is-scrolled", y > 24);
     const mid = nav.offsetHeight / 2;
-    const z = zones.find((el) => { const r = el.getBoundingClientRect(); return r.top <= mid && r.bottom > mid; });
+    const z = [...zones].reverse().find((el) => { const r = el.getBoundingClientRect(); return r.top <= mid && r.bottom > mid; });
     if (z) nav.dataset.theme = (innerWidth <= 960 && z.dataset.navMobile) || z.dataset.nav;
     // sur la photo de la page 1 : aucun fond ; plus bas : léger voile pour garder les liens lisibles
-    nav.classList.toggle("is-past", !!z && z !== zones[0]);
+    nav.classList.toggle("is-past", !!z && !zones[0].contains(z));
   };
   addEventListener("resize", onScroll, { passive: true });
   addEventListener("scroll", onScroll, { passive: true });

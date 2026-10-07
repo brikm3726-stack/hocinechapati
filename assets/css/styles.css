@@ -1797,3 +1797,34 @@ body::after {
 /* assiette entièrement visible dans la carte */
 .pcard__img--plate { position: relative; display: block; }
 .pcard__dish { position: absolute; top: 8%; bottom: 8%; left: 50%; height: auto; transform: translateX(-50%); }
+
+/* section Bol H Chapati (sous les pizzas) : même mise en page, crème intermédiaire */
+.bols { background: #F8ECDA; margin-top: 0; }
+.bols::before { background: radial-gradient(circle at 92% 0%, rgba(245,158,11,.16), transparent 40%), radial-gradient(circle at 0% 100%, rgba(217,40,28,.08), transparent 40%); }
+.supbox b { text-align: right; }
+
+/* ==========================================================================
+   PIZZAS — bande de la couleur du fond de la vidéo (vidéo à gauche, suppléments à droite)
+   ========================================================================== */
+.pizzas:not(.chapis) { padding-bottom: 0; }
+.vband { --vred: #D10036; position: relative; margin-top: clamp(24px, 4vw, 48px); background: var(--vred); }
+.vband__inner { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: clamp(24px, 4vw, 64px); }
+.vband__media { margin: 0; height: clamp(380px, 46vw, 600px); aspect-ratio: 600 / 818; }
+.vband__supp { align-self: center; }
+.vband .supbox { box-shadow: 0 30px 60px -30px rgba(60,0,15,.6); border-color: rgba(255,255,255,.4); }
+@media (max-width: 760px) {
+  .vband__inner { grid-template-columns: 1fr; justify-items: center; gap: 4px; padding-bottom: 36px; }
+  .vband__media { height: auto; width: min(76vw, 340px); }
+  .vband__supp { width: 100%; }
+}
+/* coins arrondis des sections Bol H / Chapatis posés sur la section précédente (plus de coins sombres) */
+.bols, .chapis { position: relative; z-index: 1; margin-top: calc(var(--r-lg) * -1); }
+.vband { padding-bottom: var(--r-lg); }
+
+/* globe : la pizza tourne sans jamais s'arrêter (même sens et même vitesse que la vidéo : 1 tour / 3,6 s) */
+.globe { position: relative; }
+.globe__pied { position: absolute; inset: 0; width: 100%; height: 100%; }
+.globe__pizza {
+  position: absolute; left: calc(82 / 600 * 100%); top: calc(144 / 818 * 100%); width: calc(380 / 600 * 100%); height: auto; aspect-ratio: 1;
+  animation: spin 3.6s linear infinite; will-change: transform;
+}
