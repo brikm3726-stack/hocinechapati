@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Menu — Hocine Chapati | Chapatis, Pizzas, Bol H Chapati, Formules & Boissons</title>
+  <meta name="description" content="La carte complète de Hocine Chapati : chapatis Original et S-2, pizzas Mini, Normal et Mega, Bol H Chapati, formules et boissons, avec tous les prix en DA.">
+  <meta name="theme-color" content="#0B0908">
+  <!-- TODO: remplacer https://www.hocinechapati.dz par le vrai nom de domaine -->
+  <link rel="canonical" href="https://www.hocinechapati.dz/menu.html">
+
+  <!-- Open Graph / réseaux -->
+  <meta property="og:type" content="restaurant">
+  <meta property="og:site_name" content="Hocine Chapati">
+  <meta property="og:title" content="Hocine Chapati — Le vrai goût du Chapati">
+  <meta property="og:description" content="Chapatis généreux, pizzas gourmandes et Bol H Chapati préparés avec passion. Le goût qui rassemble.">
+  <meta property="og:image" content="https://www.hocinechapati.dz/assets/img/og-image.jpg">
+  <meta property="og:locale" content="fr_DZ">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <link rel="icon" type="image/png" href="assets/img/favicon.png">
+  <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Yellowtail&family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="preload" as="image" href="assets/img/logo.webp" fetchpriority="high">
+    <link rel="stylesheet" href="assets/css/styles.css?v=36">
+  <script>document.documentElement.classList.add("js","has-gate")</script>
+
+</head>
+<body class="page-menu">
+  <!-- ======================= ENTRÉE DU MENU =======================
+       « Une faim de chapati ? » s'affiche avant la carte, puis s'ouvre vers le haut. -->
+  <div class="gate" id="gate" role="dialog" aria-label="Entrée du menu">
+    <div class="gate__inner">
+      <img class="gate__logo" src="assets/img/logo.webp" alt="Logo Hocine Chapati" width="140" height="140">
+      <p class="gate__title">Une faim de <em class="accent">chapati</em>&nbsp;?</p>
+      <p class="gate__sub">Voici toute notre carte.</p>
+      <div class="gate__ctas">
+        <button class="btn btn--red btn--xl" id="gateEnter" type="button">Voir le menu
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <a class="btn btn--ghost btn--xl" href="tel:+213556725681" data-order>Appeler · 0556 72 56 81</a>
+      </div>
+    </div>
+    <div class="gate__bar" aria-hidden="true"><span></span></div>
+  </div>
+
+  <a class="skip" href="#main">Aller au contenu</a>
+
+  <!-- ============================ NAVBAR ============================ -->
+  <header class="nav" id="nav">
+    <div class="nav__inner">
+      <a class="nav__brand" href="index.html#accueil" aria-label="Hocine Chapati — accueil">
+        <span class="nav__logo"><img src="assets/img/logo.webp" alt="Logo Hocine Chapati" width="56" height="56"></span>
+        <span class="nav__name">Hocine<br><b>Chapati</b></span>
+      </a>
+      <nav class="nav__links" aria-label="Navigation principale">
+        <a href="index.html#accueil">Accueil</a>
+        <a href="#menu">Menu</a>
+        <a href="index.html#chapati">Chapati</a>
+        <a href="index.html#pizzas">Pizzas</a>
+        <a href="#bowls">Bol H Chapati</a>
+        <a href="index.html#contact">Contact</a>
+      </nav>
+      <a class="btn nav__cta" href="tel:+213556725681" data-order><svg class="nav__cta-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10"/><path d="M17 21V3c-2 1.5-3 4-3 7v3h3"/></svg>Commander<svg class="nav__cta-arr" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a>
+      <button class="burger" id="burger" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="drawer">
+        <span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Menu mobile plein écran -->
+  <div class="drawer" id="drawer" aria-hidden="true">
+    <nav class="drawer__links" aria-label="Navigation mobile">
+      <a href="index.html#accueil"><small>01</small>Accueil</a>
+      <a href="#menu"><small>02</small>Menu</a>
+      <a href="index.html#chapati"><small>03</small>Chapati</a>
+      <a href="index.html#pizzas"><small>04</small>Pizzas</a>
+      <a href="#bowls"><small>05</small>Bol H Chapati</a>
+      <a href="index.html#contact"><small>06</small>Contact</a>
+    </nav>
+    <div class="drawer__foot">
+      <a class="btn btn--red btn--lg" href="tel:+213556725681">Commander · 0556 72 56 81</a>
+      <p>Sur place · À emporter · Livraison rapide</p>
+    </div>
+  </div>
+
+  <main id="main">
+    <!-- ========================== EN-TÊTE DU MENU ==========================
+         Inspiré de la photo 55 : vert profond, bande diagonale, assiettes rondes, cartes en verre -->
+    <section class="mhero" id="menu" data-nav="dark" aria-labelledby="menu-title">
+      <span class="mhero__band" aria-hidden="true"></span>
+      <div class="container mhero__grid">
+        <div class="mhero__copy">
+          <p class="mhero__script">Notre</p>
+          <h1 class="mhero__title" id="menu-title">Menu</h1>
+          <p class="mhero__sub">Chapatis, pizzas, Bol H Chapati, formules et boissons. Préparés à la commande, servis bien chauds.</p>
+          <a class="mhero__order" href="tel:+213556725681" data-order>Commander</a>
+        </div>
+        <div class="mhero__plates" id="mheroPlates"><!-- rendu par main.js --></div>
+      </div>
+    </section>
+
+    <!-- Onglets (collés sous la barre du haut) -->
+    <div class="mtabs">
+      <div class="container">
+        <div class="tabs" role="tablist" aria-label="Catégories du menu">
+          <button role="tab" class="tab is-active" aria-selected="true" data-cat="chapati">Chapati</button>
+          <button role="tab" class="tab" aria-selected="false" data-cat="pizzas">Pizzas</button>
+          <button role="tab" class="tab" aria-selected="false" data-cat="bowls">Bol H Chapati</button>
+          <button role="tab" class="tab" aria-selected="false" data-cat="formules">Formules</button>
+          <button role="tab" class="tab" aria-selected="false" data-cat="boissons">Boissons</button>
+          <span class="tabs__ink" aria-hidden="true"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Catégorie affichée — inspirée de la photo 44 : colonne crème + vague verte avec assiettes -->
+    <section class="mcat" id="menuPanel" data-nav="light" role="tabpanel" aria-live="polite"><!-- rendu par main.js --></section>
+  </main>
+
+  <footer class="foot" data-nav="dark">
+    <div class="container foot__inner">
+      <div class="foot__brand">
+        <img src="assets/img/logo.webp" alt="" width="44" height="44" loading="lazy">
+        <div><b>Hocine Chapati</b><span>Le goût qui rassemble</span></div>
+      </div>
+      <nav class="foot__links" aria-label="Pied de page">
+        <a href="#menu">Menu</a><a href="index.html#chapati">Chapati</a><a href="index.html#pizzas">Pizzas</a><a href="#bowls">Bol H Chapati</a><a href="index.html#contact">Contact</a>
+      </nav>
+      <p class="foot__copy">© <span id="year">2026</span> Hocine Chapati. Prix en dinars algériens (DA).</p>
+    </div>
+  </footer>
+
+  <!-- Bouton rond « Menu » (téléphone) -->
+  <a class="fab-menu" href="#menuPanel" aria-label="Aller à la carte">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></svg>
+    <span>Menu</span>
+  </a>
+
+  <script src="assets/js/menu-data.js?v=36" defer></script>
+  <script src="assets/js/main.js?v=36" defer></script>
+  <script src="assets/js/gate.js?v=36" defer></script>
+</body>
+</html>

@@ -1,0 +1,417 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Hocine Chapati — Le vrai goût du Chapati | Chapatis, Pizzas & Bol H Chapati</title>
+  <meta name="description" content="Hocine Chapati : chapatis généreux, pizzas gourmandes et Bol H Chapati préparés à la commande. Sur place, à emporter et livraison rapide. Commandez au 0556 72 56 81.">
+  <meta name="theme-color" content="#0B0908">
+  <!-- TODO: remplacer https://www.hocinechapati.dz par le vrai nom de domaine -->
+  <link rel="canonical" href="https://www.hocinechapati.dz/">
+
+  <!-- Open Graph / réseaux -->
+  <meta property="og:type" content="restaurant">
+  <meta property="og:site_name" content="Hocine Chapati">
+  <meta property="og:title" content="Hocine Chapati — Le vrai goût du Chapati">
+  <meta property="og:description" content="Chapatis généreux, pizzas gourmandes et Bol H Chapati préparés avec passion. Le goût qui rassemble.">
+  <meta property="og:image" content="https://www.hocinechapati.dz/assets/img/og-image.jpg">
+  <meta property="og:locale" content="fr_DZ">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <link rel="icon" type="image/png" href="assets/img/favicon.png">
+  <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="preload" as="image" href="assets/img/logo.webp" fetchpriority="high">
+  <link rel="preload" as="image" href="assets/img/hero-page1.webp">
+  <link rel="stylesheet" href="assets/css/styles.css?v=36">
+  <script>document.documentElement.classList.add("js");if(!location.hash)document.documentElement.classList.add("has-intro")</script>
+
+  <!-- Données structurées : adresse, horaires et réseaux à compléter (ne pas inventer) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Restaurant",
+    "name": "Hocine Chapati",
+    "slogan": "Le goût qui rassemble",
+    "image": "https://www.hocinechapati.dz/assets/img/og-image.jpg",
+    "logo": "https://www.hocinechapati.dz/assets/img/logo.webp",
+    "url": "https://www.hocinechapati.dz/",
+    "telephone": "+213556725681",
+    "geo": {"@type": "GeoCoordinates", "latitude": 36.6975972, "longitude": 4.0516581},
+    "hasMap": "https://maps.app.goo.gl/QoGaLTDf92nbLYyv8",
+    "sameAs": ["https://www.instagram.com/hocinechapati/", "https://www.facebook.com/share/1Hcn2zAkWu/", "https://www.tiktok.com/@hocine.chapati"],
+    "openingHoursSpecification": [{
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": ["Saturday", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday"],
+      "opens": "11:00",
+      "closes": "21:00"
+    }],
+    "servesCuisine": ["Chapati", "Pizza", "Bol H Chapati"],
+    "priceRange": "30 DA - 2300 DA",
+    "currenciesAccepted": "DZD",
+    "hasMenu": "https://www.hocinechapati.dz/#menu",
+    "acceptsReservations": false,
+    "amenityFeature": [
+      {"@type": "LocationFeatureSpecification", "name": "Sur place", "value": true},
+      {"@type": "LocationFeatureSpecification", "name": "À emporter", "value": true},
+      {"@type": "LocationFeatureSpecification", "name": "Livraison", "value": true}
+    ]
+  }
+  </script>
+</head>
+<body>
+  <!-- ======================= INTRO =======================
+       1) Logo dans le noir, la souris / le doigt l'éclaire (5 s)
+       2) La lumière s'ouvre et « Bienvenue chez nous » s'écrit sous le logo
+       3) Page de choix (fond 22.jpg) : chapati ou pizza qui flottent
+       4) Petit message selon le choix, puis le site s'ouvre sur la bonne section -->
+  <div class="choice" id="choice" aria-hidden="true">
+    <img class="choice__bg" src="assets/img/fond-choix.webp" alt="" width="1672" height="941">
+    <div class="choice__head">
+      <p class="choice__welcome" id="cw" aria-label="Bienvenue chez nous"></p>
+      <p class="choice__eyebrow">Hocine Chapati · Le goût qui rassemble</p>
+      <h2 class="choice__title">Qu'est-ce qui vous fait <em>envie</em>&nbsp;?</h2>
+    </div>
+    <!-- chapati collé au bord gauche, pizza collée au bord droit -->
+    <button class="choice__opt choice__opt--left" type="button" data-pick="chapati">
+      <img src="assets/img/pnj-chapati.webp" alt="" width="900" height="443">
+      <span>Chapati</span>
+    </button>
+    <span class="choice__or" aria-hidden="true">ou</span>
+    <button class="choice__opt choice__opt--right" type="button" data-pick="pizza">
+      <img src="assets/img/pnj-pizza.webp" alt="" width="900" height="532">
+      <span>Pizza</span>
+    </button>
+    <div class="choice__foot">
+      <p class="choice__msg" id="choiceMsg" aria-live="polite"></p>
+      <button class="choice__all" id="choiceAll" type="button">Voir tout le site</button>
+    </div>
+  </div>
+  <div class="torch" id="intro" role="dialog" aria-label="Bienvenue chez Hocine Chapati">
+    <div class="torch__img"><img src="assets/img/logo.webp" alt="Logo Hocine Chapati" width="320" height="320"></div>
+    <div class="torch__dark" aria-hidden="true"></div>
+    <div class="torch__glow" aria-hidden="true"></div>
+    <p class="torch__welcome" aria-live="polite"><span class="torch__w1" id="w1"></span><span class="torch__w2" id="w2"></span></p>
+    <p class="torch__hint"><span class="torch__cursor" aria-hidden="true"></span><span class="torch__hint-txt">Bougez la souris pour éclairer</span></p>
+    <button class="torch__skip" id="introSkip">Entrer <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    <div class="torch__bar" aria-hidden="true"><span></span></div>
+  </div>
+  <script src="assets/js/intro.js?v=36"></script>
+  <a class="skip" href="#main">Aller au contenu</a>
+
+  <!-- ============================ NAVBAR ============================ -->
+  <header class="nav" id="nav">
+    <div class="nav__inner">
+      <a class="nav__brand" href="#accueil" aria-label="Hocine Chapati — accueil">
+        <span class="nav__logo"><img src="assets/img/logo.webp" alt="Logo Hocine Chapati" width="56" height="56"></span>
+        <span class="nav__name">Hocine<br><b>Chapati</b></span>
+      </a>
+      <nav class="nav__links" aria-label="Navigation principale">
+        <a href="#accueil">Accueil</a>
+        <a href="menu.html">Menu</a>
+        <a href="#chapati">Chapati</a>
+        <a href="#pizzas">Pizzas</a>
+        <a href="menu.html#bowls">Bol H Chapati</a>
+        <a href="#contact">Contact</a>
+      </nav>
+      <a class="btn nav__cta" href="tel:+213556725681" data-order><svg class="nav__cta-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10"/><path d="M17 21V3c-2 1.5-3 4-3 7v3h3"/></svg>Commander<svg class="nav__cta-arr" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a>
+      <button class="burger" id="burger" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="drawer">
+        <span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Menu mobile plein écran -->
+  <div class="drawer" id="drawer" aria-hidden="true">
+    <nav class="drawer__links" aria-label="Navigation mobile">
+      <a href="#accueil"><small>01</small>Accueil</a>
+      <a href="menu.html"><small>02</small>Menu</a>
+      <a href="#chapati"><small>03</small>Chapati</a>
+      <a href="#pizzas"><small>04</small>Pizzas</a>
+      <a href="menu.html#bowls"><small>05</small>Bol H Chapati</a>
+      <a href="#contact"><small>06</small>Contact</a>
+    </nav>
+    <div class="drawer__foot">
+      <a class="btn btn--red btn--lg" href="tel:+213556725681">Commander · 0556 72 56 81</a>
+      <p>Sur place · À emporter · Livraison rapide</p>
+    </div>
+  </div>
+
+  <main id="main">
+    <!-- ============================ HERO ============================ -->
+    <section class="hero hero--img" id="accueil" data-nav="light" data-nav-mobile="dark">
+      <!-- Bannière du client (page 1.jpg). Les boutons dessinés dans l'image sont rendus cliquables par des zones invisibles. -->
+      <div class="hero__pic">
+        <img src="assets/img/hero-page1.webp" alt="Chapati grillé au fromage fondant et frites : le goût qui vous rassemble. Snack gourmand et fait maison." width="1671" height="819" fetchpriority="high">
+        <a class="hot hot--order" href="tel:+213556725681" data-order aria-label="Commander"></a>
+        <a class="hot hot--menu" href="menu.html" aria-label="Voir le menu"></a>
+      </div>
+      <!-- Version mobile : le texte de la bannière en vrai texte, lisible sur petit écran
+           (sur ordinateur ce bloc reste lisible par Google / lecteurs d'écran mais invisible) -->
+      <div class="hero__m">
+        <p class="hero__m-eyebrow">Snack gourmand &amp; fait maison</p>
+        <h1 class="hero__m-title">Le goût qui vous <em>rassemble</em><span class="sr-only"> — Hocine Chapati : chapatis, pizzas et Bol H Chapati</span></h1>
+        <p class="hero__m-sub">Des plats savoureux, des ingrédients frais et une ambiance conviviale.</p>
+      </div>
+      <div class="hero__m-ctas">
+        <a class="btn btn--dark btn--lg hero__btn" href="tel:+213556725681" data-order><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10"/><path d="M17 21V3c-2 1.5-3 4-3 7v3h3"/></svg>Commander<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a>
+        <a class="btn btn--line btn--lg hero__btn" href="menu.html"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></svg>Voir le menu</a>
+      </div>
+    </section>
+
+    <!-- ======================= NOTRE SPÉCIALITÉ ======================= -->
+    <section class="spec" id="chapati" data-nav="dark" aria-labelledby="spec-title">
+      <!-- Fond : photo c.jpg, pizza retirée (fond rouge seul), fixe pendant le défilement de la section -->
+      <div class="spec__bg" aria-hidden="true"><img src="assets/img/fond-rouge.webp" alt="" width="1199" height="672" loading="lazy"></div>
+      <div class="container spec__grid">
+        <!-- iPhone 9:16 : toute la carte + panier, la commande part sur WhatsApp (assets/js/order.js) -->
+        <div class="spec__phone">
+          <div class="mphone">
+            <span class="mphone__btn mphone__btn--action" aria-hidden="true"></span>
+            <span class="mphone__btn mphone__btn--vol1" aria-hidden="true"></span>
+            <span class="mphone__btn mphone__btn--vol2" aria-hidden="true"></span>
+            <span class="mphone__btn mphone__btn--power" aria-hidden="true"></span>
+            <div class="mphone__screen is-home" id="mphoneScreen">
+              <div class="papp" id="papp" aria-label="Commander en ligne : la carte de Hocine Chapati">
+                <div class="papp__status" aria-hidden="true"><span>9:41</span><i class="papp__island"></i><span class="papp__sig"><i></i><i></i><i></i><b></b></span></div>
+                <header class="papp__head">
+                  <img src="assets/img/logo.webp" alt="" width="44" height="44">
+                  <div class="papp__brand"><b>Hocine Chapati</b><small id="pappStatus">Commande en ligne</small></div>
+                  <button type="button" class="papp__cartbtn" id="pappCartBtn" aria-label="Voir le panier (0 article)">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2l2.4 11.2a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 2-1.5L21 8H6.2"/><circle cx="10" cy="20" r="1.3"/><circle cx="17" cy="20" r="1.3"/></svg>
+                    <span class="papp__badge" id="pappBadge" hidden>0</span>
+                  </button>
+                </header>
+                <nav class="papp__cats" id="pappCats" aria-label="Catégories de la carte"></nav>
+                <div class="papp__list" id="pappList"></div>
+                <button type="button" class="papp__bar" id="pappBar" tabindex="-1" aria-hidden="true"></button>
+                <div class="papp__toast" id="pappToast" role="status"></div>
+                <div class="papp__sheet" id="pappSheet" hidden></div>
+                <span class="papp__home" aria-hidden="true"></span>
+              </div>
+              <!-- Écran d'accueil : on touche l'icône (logo) pour ouvrir la carte -->
+              <div class="phome" id="phome">
+                <div class="phome__status" aria-hidden="true"><span>9:41</span><i class="papp__island"></i><span class="papp__sig"><i></i><i></i><i></i><b></b></span></div>
+                <div class="phome__widget">
+                  <span class="phome__widget-k">Hocine Chapati</span>
+                  <b class="phome__widget-s" id="phomeStatus">Commande en ligne</b>
+                  <span class="phome__widget-t">Chapatis · Pizzas · Bol H Chapati</span>
+                </div>
+                <div class="phome__app">
+                  <p class="phome__tip">Envie d'un chapati&nbsp;?<br><strong>Touchez le logo pour commander</strong></p>
+                  <button type="button" class="phome__icon" id="phomeIcon" aria-label="Ouvrir la carte de Hocine Chapati et commander">
+                    <img src="assets/img/logo.webp" alt="" width="160" height="160">
+                  </button>
+                  <span class="phome__label">Hocine Chapati</span>
+                </div>
+                <span class="papp__home phome__bar" aria-hidden="true"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="spec__content">
+          <p class="eyebrow reveal"><span class="dot"></span>Notre spécialité</p>
+          <h2 class="h2 reveal" id="spec-title">Le Chapati<br><em class="serif">qui fait revenir.</em></h2>
+          <p class="lead reveal">Une galette dorée, une garniture généreuse, pliée et servie chaude. Deux familles pour deux envies : l'<strong>Original</strong>, la recette qui a lancé la maison, et la <strong>Saison 2</strong>, plus copieuse, au poulet, à la viande ou en mixte.</p>
+
+          <div class="s2 reveal">
+            <div class="s2__head">
+              <h3 class="h3">Chapati <span class="badge">S-2</span></h3>
+              <span class="caption">Saison 2</span>
+            </div>
+            <ul class="s2__list" id="s2List"><!-- rendu par main.js --></ul>
+          </div>
+
+          <div class="orig reveal">
+            <div class="s2__head">
+              <h3 class="h3">Chapati <span class="badge badge--gold">Original</span></h3>
+              <span class="caption">La recette d'origine</span>
+            </div>
+            <ul class="orig__list" id="origList"><!-- rendu par main.js --></ul>
+            <p class="supp" id="origSupp"></p>
+          </div>
+
+          <div class="pz reveal">
+            <div class="s2__head">
+              <h3 class="h3">Menu <span class="badge">Pizzas</span></h3>
+              <span class="caption">Mini · Normal · Mega</span>
+            </div>
+            <div class="pz__row pz__row--head"><span>Pizza</span><span>Mini</span><span>Normal</span><span>Mega</span></div>
+            <div id="pzRows"><!-- rendu par main.js --></div>
+            <p class="supp" id="pzSupp"></p>
+          </div>
+
+          <a class="btn btn--red reveal" href="tel:+213556725681" data-order>Commander</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================== PIZZAS =========================== -->
+    <section class="pizzas section section--cream" id="pizzas" data-nav="light" aria-labelledby="pizza-title">
+      <div class="container">
+        <div class="sec-head">
+          <div>
+            <p class="eyebrow eyebrow--dark reveal"><span class="dot"></span>Deuxième passion</p>
+            <h2 class="h2 reveal" id="pizza-title">Nos <em class="serif">Pizzas</em></h2>
+          </div>
+          <p class="sec-head__txt reveal">Une pâte cuite au four, du fromage qui file, et trois formats pour chaque appétit : <b>Mini</b>, <b>Normal</b> et <b>Mega</b> à partager.</p>
+        </div>
+      </div>
+      <!-- Défilement horizontal automatique (continu, de droite à gauche) -->
+      <div class="hs" id="pizzaHS" aria-label="Nos pizzas">
+        <div class="hs__sticky">
+          <div class="hs__track" id="pizzaGrid"><!-- rendu par main.js --></div>
+        </div>
+      </div>
+      <!-- Suppléments des pizzas : petit tableau en bas à droite -->
+      <div class="container hs__foot" id="pizzaSupp"><!-- rendu par main.js --></div>
+    </section>
+
+    <!-- =========================== CHAPATIS =========================== -->
+    <section class="pizzas section section--cream chapis" id="chapatis" data-nav="light" aria-labelledby="chapis-title">
+      <div class="container">
+        <div class="sec-head">
+          <div>
+            <p class="eyebrow eyebrow--dark reveal"><span class="dot"></span>La spécialité</p>
+            <h2 class="h2 reveal" id="chapis-title">Nos <em class="serif">Chapatis</em></h2>
+          </div>
+          <p class="sec-head__txt reveal">Dorés à la poêle et généreusement garnis : l'<b>Original</b>, la recette qui a lancé la maison, et la <b>Saison 2</b>, plus copieuse.</p>
+        </div>
+      </div>
+      <div class="hs" id="chapatiHS" aria-label="Nos chapatis">
+        <div class="hs__sticky">
+          <div class="hs__track" id="chapatiGrid"><!-- rendu par main.js --></div>
+        </div>
+      </div>
+      <!-- Suppléments des chapatis : petit tableau en bas à droite -->
+      <div class="container hs__foot" id="chapatiSupp"><!-- rendu par main.js --></div>
+    </section>
+
+    <!-- ========================== EXPÉRIENCE ========================== -->
+    <section class="exp section" data-nav="dark" aria-labelledby="exp-title">
+      <div class="container">
+        <h2 class="exp__title reveal" id="exp-title">L'expérience<br><em class="serif">Hocine Chapati</em></h2>
+        <div class="exp__grid">
+          <article class="exp__item reveal"><span class="exp__n">01</span><h3>Préparé à la commande</h3><p>Votre chapati est garni, plié et servi au moment où vous le commandez.</p></article>
+          <article class="exp__item reveal"><span class="exp__n">02</span><h3>Des recettes généreuses</h3><p>Double fromage, tout en double, format Mega : ici, on ne compte pas la garniture.</p></article>
+          <article class="exp__item reveal"><span class="exp__n">03</span><h3>Des ingrédients choisis</h3><p>Fromages, poulet, viande, thon : des garnitures sélectionnées pour le goût.</p></article>
+          <article class="exp__item reveal"><span class="exp__n">04</span><h3>Une passion pour le goût</h3><p>Une maison, un visage, une signature : <em>Not just good. It's my twist.</em></p></article>
+        </div>
+        <ul class="exp__services reveal">
+          <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11h18M5 11V7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v4M6 11v8m12-8v8" /></svg>Sur place</li>
+          <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8h12l-1 12H7L6 8Zm3 0V6a3 3 0 0 1 6 0v2" /></svg>À emporter</li>
+          <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 16V6h11v10M14 9h4l3 3v4h-7M7.5 18.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Zm10 0a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z" /></svg>Livraison rapide</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ======================== RETROUVEZ-NOUS ======================== -->
+    <section class="find section" id="contact" data-nav="light" aria-labelledby="find-title">
+      <div class="container find__grid">
+        <div class="find__info">
+          <p class="eyebrow reveal"><span class="dot"></span>Restaurant</p>
+          <h2 class="h2 reveal" id="find-title">Retrouvez<em class="serif">-nous</em></h2>
+
+          <dl class="find__list reveal">
+            <div>
+              <dt>Téléphone</dt>
+              <dd><a class="find__phone" href="tel:+213556725681">0556 72 56 81</a></dd>
+            </div>
+            <div>
+              <dt>Adresse</dt>
+              <!-- Fiche Google Maps du client. TODO : ajouter l'adresse écrite (rue, ville) quand le client la donne -->
+              <dd><a class="find__addr" href="https://maps.app.goo.gl/QoGaLTDf92nbLYyv8" target="_blank" rel="noopener">HOCINE CHAPATI sur Google Maps →</a></dd>
+            </div>
+            <div>
+              <dt>Horaires</dt>
+              <!-- Horaires fournis par le client. Le statut « Ouvert / Fermé » est calculé à l'heure d'Alger (main.js) -->
+              <dd class="hours">
+                <span class="hours__status" id="hoursStatus" hidden></span>
+                <ul class="hours__list" id="hoursList" data-open="11:00" data-close="21:00">
+                  <li data-day="0"><span>Dimanche</span><b>11:00 – 21:00</b></li>
+                  <li data-day="1"><span>Lundi</span><b>11:00 – 21:00</b></li>
+                  <li data-day="2"><span>Mardi</span><b>11:00 – 21:00</b></li>
+                  <li data-day="3"><span>Mercredi</span><b>11:00 – 21:00</b></li>
+                  <li data-day="4"><span>Jeudi</span><b>11:00 – 21:00</b></li>
+                  <li data-day="5" class="is-off"><span>Vendredi</span><b>Fermé</b></li>
+                  <li data-day="6"><span>Samedi</span><b>11:00 – 21:00</b></li>
+                </ul>
+              </dd>
+            </div>
+            <div>
+              <dt>Services</dt>
+              <dd>Sur place · À emporter · Livraison rapide</dd>
+            </div>
+            <div>
+              <dt>Réseaux</dt>
+              <dd class="socials">
+                <a href="https://www.instagram.com/hocinechapati/" target="_blank" rel="noopener" aria-label="Instagram : @hocinechapati"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg></a>
+                <a href="https://www.facebook.com/share/1Hcn2zAkWu/" target="_blank" rel="noopener" aria-label="Facebook : Hocine Chapati"><svg viewBox="0 0 24 24"><path d="M14 8h3V4h-3a4 4 0 0 0-4 4v3H7v4h3v6h4v-6h3l1-4h-4V8Z"/></svg></a>
+                <a href="https://www.tiktok.com/@hocine.chapati" target="_blank" rel="noopener" aria-label="TikTok : @hocine.chapati"><svg viewBox="0 0 24 24"><path d="M14 3v11.5a3.5 3.5 0 1 1-3-3.46M14 3c.5 2.5 2.5 4.5 5 4.5"/></svg></a>
+              </dd>
+            </div>
+          </dl>
+
+          <div class="find__ctas reveal">
+            <a class="btn btn--red btn--lg" href="tel:+213556725681">Nous contacter</a>
+            <a class="btn btn--ghost btn--lg" href="https://maps.app.goo.gl/QoGaLTDf92nbLYyv8" target="_blank" rel="noopener">Voir sur Google Maps</a>
+          </div>
+        </div>
+
+        <!-- Carte dans un iPhone 17 Pro Max qui flotte + bouton itinéraire -->
+        <div class="find__device reveal">
+          <div class="iphone" aria-label="Carte de l'emplacement de Hocine Chapati">
+            <span class="iphone__btn iphone__btn--action" aria-hidden="true"></span>
+            <span class="iphone__btn iphone__btn--vol1" aria-hidden="true"></span>
+            <span class="iphone__btn iphone__btn--vol2" aria-hidden="true"></span>
+            <span class="iphone__btn iphone__btn--power" aria-hidden="true"></span>
+            <span class="iphone__btn iphone__btn--cam" aria-hidden="true"></span>
+            <div class="iphone__screen">
+              <div class="iphone__status" aria-hidden="true">
+                <span class="iphone__time">9:41</span>
+                <span class="iphone__island"></span>
+                <span class="iphone__icons"><i></i><i></i><i></i></span>
+              </div>
+              <iframe class="iphone__map" src="https://maps.google.com/maps?q=36.6975972,4.0516581&amp;z=17&amp;hl=fr&amp;output=embed" title="Carte Google Maps : Hocine Chapati" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+              <span class="iphone__home" aria-hidden="true"></span>
+            </div>
+          </div>
+          <div class="iphone__shadow" aria-hidden="true"></div>
+          <a class="btn btn--red btn--lg find__route" href="https://www.google.com/maps/dir/?api=1&amp;destination=36.6975972,4.0516581" target="_blank" rel="noopener">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2 4.5 20.3l.7.7L12 18l6.8 3 .7-.7L12 2Z" fill="currentColor"/></svg>
+            Itinéraire
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="foot" data-nav="dark">
+    <div class="container foot__inner">
+      <div class="foot__brand">
+        <img src="assets/img/logo.webp" alt="" width="44" height="44" loading="lazy">
+        <div><b>Hocine Chapati</b><span>Le goût qui rassemble</span></div>
+      </div>
+      <nav class="foot__links" aria-label="Pied de page">
+        <a href="menu.html">Menu</a><a href="#chapati">Chapati</a><a href="#pizzas">Pizzas</a><a href="menu.html#bowls">Bol H Chapati</a><a href="#contact">Contact</a>
+      </nav>
+      <p class="foot__copy">© <span id="year">2026</span> Hocine Chapati. Prix en dinars algériens (DA).</p>
+    </div>
+  </footer>
+
+  <!-- Bouton rond « Menu » (téléphone) -->
+  <a class="fab-menu" href="menu.html" aria-label="Voir le menu">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></svg>
+    <span>Menu</span>
+  </a>
+
+  <script src="assets/js/menu-data.js?v=36" defer></script>
+  <script src="assets/js/main.js?v=36" defer></script>
+  <script src="assets/js/order.js?v=36" defer></script>
+</body>
+</html>
