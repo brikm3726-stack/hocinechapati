@@ -364,11 +364,15 @@
   const onScroll = () => {
     const y = scrollY;
     nav.classList.toggle("is-scrolled", y > 24);
+    // bouton rond « Menu » caché tant que la première page est à l'écran (il couvrirait « Suivant »)
+    const hx = $(".hx");
+    document.documentElement.classList.toggle("fab-off", !!hx && y < hx.offsetHeight * 0.75);
     const mid = nav.offsetHeight / 2;
     const z = [...zones].reverse().find((el) => { const r = el.getBoundingClientRect(); return r.top <= mid && r.bottom > mid; });
     if (z) nav.dataset.theme = (innerWidth <= 960 && z.dataset.navMobile) || z.dataset.nav;
     // sur la photo de la page 1 : aucun fond ; plus bas : léger voile pour garder les liens lisibles
-    nav.classList.toggle("is-past", !!z && !zones[0].contains(z));
+    const first = zones.find((el) => el.offsetHeight > 0);   // 1re page visible (vidéo sur téléphone, plats sur ordinateur)
+    nav.classList.toggle("is-past", !!z && !!first && !first.contains(z));
   };
   addEventListener("resize", onScroll, { passive: true });
   addEventListener("scroll", onScroll, { passive: true });
@@ -444,29 +448,256 @@
 
   /* ---------------- Intro du hero ---------------- */
   const start = () => requestAnimationFrame(() => document.body.classList.add("is-loaded"));
-  const heroImg = $(".hero__pic img");
+  const heroImg = $(".hx__dish");
   const boot = () => {
     if (!heroImg || heroImg.complete) start();
     else { heroImg.addEventListener("load", start, { once: true }); setTimeout(start, 1200); }
   };
-  // l'animation du hero attend la fin de l'intro « lampe torche »
+  // l'animation du hero attend la fin de l'intro
   if (document.documentElement.classList.contains("has-intro")) addEventListener("intro:done", boot, { once: true });
   else boot();
 
-  /* ---------------- iPhone de la carte aligné sur les horaires (ordinateur) ---------------- */
-  const dev = $(".find__device"), phoneEl = $(".find__device .iphone"), hoursBox = $(".hours");
-  if (dev && phoneEl && hoursBox) {
-    const alignPhone = () => {
-      dev.style.marginTop = "";
-      if (innerWidth <= 1280) return;           // téléphone / tablette : l'iPhone reste sous le texte
-      const h = hoursBox.getBoundingClientRect(), d = dev.getBoundingClientRect();
-      const gap = h.top + h.height / 2 - (d.top + phoneEl.offsetTop + phoneEl.offsetHeight / 2);
-      dev.style.marginTop = `${Math.max(0, Math.round(gap))}px`;
+  /* ---------------- iPhone de l'itinéraire ----------------
+     Sa place : à droite des horaires (#mapSlot). Sur ordinateur il attend d'abord dans la place vide
+     à gauche des suppléments des chapatis (#mapDock), puis descend en ligne droite jusqu'à sa place
+     pendant le défilement, et ne s'allume qu'en y arrivant. Il vit dans <body> (position absolue)
+     pour ne pas être coupé par les sections qu'il traverse. */
+  const mapPh = $("#mapPhone"), mapSlot = $("#mapSlot"), mapDock = $("#mapDock"), hoursBox = $(".hours");
+  if (mapPh && mapSlot) {
+    const scr = $("#mapScreen"), dev = mapSlot.parentElement;
+    const desk = matchMedia("(min-width: 961px)");
+    document.body.append(mapPh);
+    mapPh.classList.add("is-floating");
+    let m = null, lit = true, raf = 0;
+    const power = (on) => {
+      if (on === lit) return;
+      lit = on;
+      scr.classList.toggle("is-off", !on);
+      if (on && !reduce) { scr.classList.remove("is-wake"); void scr.offsetWidth; scr.classList.add("is-wake"); }
     };
-    addEventListener("resize", alignPhone, { passive: true });
-    addEventListener("load", alignPhone);
-    document.fonts?.ready.then(alignPhone);
-    alignPhone();
+    power(false);
+    const supp = $("#chapatiSupp");
+    let fly = false;
+    const find = $(".find"), info = $(".find__info"), hList = $("#hoursList"), flist = $(".find__list");
+    const measure = () => {
+      // ordinateur : sa place est dans le vert, juste à droite des horaires et à leur hauteur
+      dev.style.marginTop = ""; dev.style.marginLeft = ""; find.style.backgroundPosition = ""; flist.style.maxWidth = "";
+      if (desk.matches && hoursBox && hList) {
+        const h = hoursBox.getBoundingClientRect(), l = hList.getBoundingClientRect(), d = mapSlot.getBoundingClientRect();
+        // un peu plus à droite et un peu plus bas que les horaires (sans sortir de l'écran)
+        const gx = Math.min(l.right + 136, innerWidth - 32 - d.width);
+        dev.style.marginTop = `${Math.max(0, Math.round(h.top + h.height / 2 + 70 - (d.top + d.height / 2)))}px`;
+        dev.style.marginLeft = `${Math.round(gx - d.left)}px`;
+        // les lignes de la liste s'arrêtent avant l'iPhone
+        flist.style.maxWidth = `${Math.round(l.right + 28 - flist.getBoundingClientRect().left)}px`;
+        // la photo 33 glisse vers la droite pour que le vert continue derrière l'iPhone (à gauche : son vert exact)
+        const f = find.getBoundingClientRect(), right = gx + d.width + 70;
+        const photoW = f.height * 1308 / 736, x = Math.max(0, (f.width - 1320) / 2) - 100;   // position de base (CSS)
+        if (x + photoW * .43 < right) find.style.backgroundPosition = `${Math.round(right - photoW * .43)}px top`;
+      }
+      fly = !!mapDock && !reduce && desk.matches && mapDock.offsetHeight > 0;
+      if (!fly && supp) supp.style.opacity = "";
+      if (!fly && info) info.style.opacity = "";
+      m = true;
+    };
+    const update = () => {
+      raf = 0;
+      if (!m) return;
+      // positions lues à chaque image : le téléphone suit toujours sa place, même si la page bouge
+      const sy = scrollY, r = mapSlot.getBoundingClientRect();
+      let x = r.left, y = r.top + sy, k = 1, p = 1;
+      if (fly) {
+        const d = mapDock.getBoundingClientRect(), max = document.documentElement.scrollHeight - innerHeight - 1;
+        const s0 = d.top + sy + d.height / 2 - innerHeight / 2;              // place vide au milieu de l'écran
+        // arrivé quand sa place est au milieu de l'écran, au plus tard quand le bas du vert touche le bas de l'écran
+        const s1 = Math.min(max, r.top + sy + r.height / 2 - innerHeight / 2, find.getBoundingClientRect().bottom + sy - innerHeight);
+        if (s1 > s0 + 50) {
+          p = Math.min(1, Math.max(0, (sy - s0) / (s1 - s0)));
+          // trajet en ligne droite « ↘ » ; les suppléments s'effacent, le texte de « Retrouvez-nous »
+          // n'apparaît qu'à l'arrivée de l'iPhone (rien ne passe dessous)
+          const e = (p + p * p * (3 - 2 * p)) / 2;
+          const dk = d.height / r.height, x0 = d.left + (d.width - r.width * dk) / 2, y0 = d.top + sy;
+          x = x0 + (r.left - x0) * e; y = y0 + (r.top + sy - y0) * e; k = dk + (1 - dk) * e;
+          if (supp) supp.style.opacity = Math.max(0, 1 - p / .18).toFixed(3);
+          if (info) info.style.opacity = Math.min(1, Math.max(0, p - .9) / .08).toFixed(3);
+          power(p >= .97 ? true : p < .6 ? false : lit);
+        }
+        mapPh._s1 = s1;
+      } else if (desk.matches || reduce) {
+        // pas de trajet : il s'allume dès qu'il est bien visible
+        if (r.top > -r.height * .45 && r.top + r.height * .55 < innerHeight) power(true);
+      }
+      mapPh.classList.toggle("is-flying", p < 1);
+      mapPh.style.transform = `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px) scale(${k.toFixed(4)})`;
+    };
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(update); };
+    const setup = () => { measure(); update(); };
+    setup();
+    addEventListener("scroll", onScroll, { passive: true });
+    addEventListener("resize", setup);
+    addEventListener("load", setup);
+    document.fonts?.ready.then(setup);
+    if (window.ResizeObserver) new ResizeObserver(setup).observe(document.body);
+    // téléphone / tablette : allumé dès qu'il apparaît à l'écran
+    new IntersectionObserver((en) => { if (!desk.matches && en[0].intersectionRatio >= .55) power(true); }, { threshold: [.55] }).observe(mapSlot);
+    // toucher l'écran éteint : on descend jusqu'à sa place
+    $("#mapOff").addEventListener("click", () => {
+      if (fly && mapPh._s1) scrollTo({ top: mapPh._s1, behavior: reduce ? "auto" : "smooth" }); else power(true);
+    });
+  }
+
+  /* ---------------- Page 1 : 3 plats en « /\ » + suppléments (vrais prix de menu-data.js) ----------------
+     Le plat du sommet est le plat choisi. Les 3 plats tournent le long du « /\ » ; un clic sur un plat l'amène au sommet.
+     L'ajout va dans le même panier que l'iPhone de commande (window.HCOrder, défini par order.js). */
+  if ($("#hxArc")) {
+    const nb = (n) => n.toLocaleString("fr-FR").replace(/\u202f/g, "\u00a0");
+    const da2 = (n) => `${nb(n)}\u00a0DA`;
+    const iPz = D.pizzas.findIndex((x) => x.name === "Pizza Maison");
+    const iCh = D.chapatiS2.findIndex((x) => x.name === "Chapati S-2 Mixte");
+    const iBo = D.bowls.findIndex((x) => x.name === "Bol Poutine Mixte");
+    const pz = D.pizzas[iPz], ch = D.chapatiS2[iCh], bo = D.bowls[iBo];
+    const DISH = {
+      chapati: { id: `s2-${iCh}`, name: ch.name, desc: ch.desc, from: da2(ch.price), photo: "chapati-frites", price: ch.price, supps: D.supplementsS2 },
+      pizza: { id: `pizza-${iPz}`, name: pz.name, desc: pz.desc, from: `dès ${da2(pz.prices[0])}`, photo: "pizza-ronde", sizes: D.pizzaSizes.map((l, k) => ({ label: l, price: pz.prices[k] })), supps: D.supplementsPizza },
+      bol: { id: `bol-${iBo}`, name: bo.name, desc: `Base ${bo.base.toLowerCase()}, garniture ${bo.prot.toLowerCase()}.`, from: `dès ${da2(bo.prices[0])}`, photo: "bol-rond", sizes: D.bowlSizes.map((l, k) => ({ label: l, price: bo.prices[k] })), supps: D.supplementsBol || [] }
+    };
+    const KEYS = ["chapati", "pizza", "bol"];
+    const btns = Object.fromEntries($$(".hx__d").map((b) => [b.dataset.key, b]));
+    let sel = 1, busy = false;
+    KEYS.forEach((k, i) => btns[k].classList.toggle("is-on", i === sel));
+
+    /* Un seul plat visible, il ne change que si on glisse (pas de défilement automatique).
+       Les plats suivent le doigt : on glisse vers la gauche, l'ancien plat descend vers le bas à gauche
+       et disparaît, le nouveau sort du vide en bas à droite et monte se poser au milieu (« /\ » ensemble).
+       Vers la droite : le même mouvement en miroir. */
+    const C = "translate(-50%, -50%)";
+    const far = (side) => `${C} translate(${side * 78}%, 78%) scale(.5) rotate(${side * 25}deg)`;   // en bas, à gauche (-1) ou à droite (+1)
+    const mid = `${C} translate(0, 0) scale(1) rotate(0deg)`;
+    const swap = (from, to, dir) => {
+      const a = btns[KEYS[from]], b = btns[KEYS[to]];
+      a.classList.remove("is-on"); b.classList.add("is-on");
+      if (reduce || !a.animate) return;
+      const opt = { duration: 1000, easing: "cubic-bezier(.5, 0, .25, 1)" };
+      busy = true;
+      a.classList.add("is-moving");
+      a.animate([{ transform: mid, opacity: 1 }, { transform: far(-dir), opacity: 0 }], opt).finished.finally(() => a.classList.remove("is-moving"));
+      b.animate([{ transform: far(dir), opacity: 0 }, { transform: mid, opacity: 1 }], opt).finished.finally(() => { busy = false; });
+    };
+    // suppléments en icônes sous le nom du plat (le bol n'a pas de suppléments : on montre ses tailles)
+    const ICON = (n) => /frite/i.test(n) ? "🍟" : /poulet/i.test(n) ? "🍗" : /viande/i.test(n) ? "🥩" : /champignon/i.test(n) ? "🍄" : "🧀";
+    const supps = $("#hxSupps");
+    const render = () => {
+      const d = DISH[KEYS[sel]];
+      $("#hxName").textContent = d.name;
+      $("#hxFrom").textContent = d.from;
+      supps.classList.add("is-swap");
+      setTimeout(() => {
+        supps.innerHTML = d.supps.length
+          ? d.supps.map((s) => `<li><i aria-hidden="true">${ICON(s.name)}</i><span>${esc(s.name)}</span><b>+${da2(s.price)}</b></li>`).join("")
+          : d.sizes.map((s) => `<li><i aria-hidden="true">🥣</i><span>Taille ${esc(s.label)}</span><b>${da2(s.price)}</b></li>`).join("");
+        supps.setAttribute("aria-label", d.supps.length ? `Suppléments : ${d.name}` : `Tailles : ${d.name}`);
+        supps.classList.remove("is-swap");
+      }, supps.innerHTML ? 220 : 0);
+    };
+
+    const go = (k, dir = 1) => {
+      if (busy) return;
+      const next = (k + 3) % 3;
+      if (next === sel) return;
+      swap(sel, next, dir); sel = next; render();
+    };
+    // swipe (doigt ou souris) : vers la gauche = plat suivant (il arrive de la droite)
+    const arc = $("#hxArc");
+    let x0 = null;
+    arc.addEventListener("pointerdown", (e) => { x0 = e.clientX; });
+    arc.addEventListener("pointerup", (e) => {
+      if (x0 === null) return;
+      const dx = e.clientX - x0; x0 = null;
+      if (Math.abs(dx) > 40) dx < 0 ? go(sel + 1, 1) : go(sel - 1, -1);
+    });
+    arc.addEventListener("pointercancel", () => { x0 = null; });
+    addEventListener("keydown", (e) => {
+      if (!["ArrowLeft", "ArrowRight"].includes(e.key) || !$(".hx").matches(":hover, :focus-within")) return;
+      e.key === "ArrowRight" ? go(sel + 1, 1) : go(sel - 1, -1);
+    });
+    render();
+    // plat choisi sur la page de choix de l'intro : on l'affiche directement sur la page 1
+    addEventListener("intro:done", (e) => {
+      const k = KEYS.indexOf(e.detail?.pick);
+      if (k < 0 || k === sel) return;
+      btns[KEYS[sel]].classList.remove("is-on"); btns[KEYS[k]].classList.add("is-on");
+      sel = k; render();
+    }, { once: true });
+  }
+
+  /* ---------------- iPhone de commande : posé à droite de la page 1, il rejoint sa place
+     en page 2 pendant le défilement et s'allume en arrivant (on touche le logo pour commander) ---------------- */
+  const ph = $(".spec__phone"), phOff = $("#mphoneOff");
+  if (ph && phOff) {
+    const lowEls = $$(".hx__cap, .hx__supps, .hx__hint");
+    const scr = $("#mphoneScreen"), dock = $("#hxDock"), frame = $(".hx__frame"), page2 = $(".spec__content");
+    const desk = matchMedia("(min-width: 961px)");
+    let m = null, lit = true, raf = 0;
+    const power = (on) => {
+      if (on === lit) return;
+      lit = on;
+      scr.classList.toggle("is-off", !on);
+      if (on && !reduce) { scr.classList.remove("is-wake"); void scr.offsetWidth; scr.classList.add("is-wake"); }
+    };
+    power(false);
+    const measure = () => {
+      ph.style.transform = ""; ph.classList.remove("is-flying");
+      if (frame) frame.style.opacity = "";
+      if (page2) page2.style.opacity = "";
+      lowEls.forEach((el) => { el.style.opacity = ""; });
+      m = null;
+      if (!dock || reduce || !desk.matches || !dock.offsetHeight) return;
+      const g = ph.parentElement, sy = scrollY;
+      const stick = parseFloat(getComputedStyle(ph).top) || 0;
+      // place naturelle du téléphone en page 2 (en haut de sa grille), avant qu'il ne se colle
+      const top = g.getBoundingClientRect().top + sy + parseFloat(getComputedStyle(g).paddingTop);
+      m = { top, stick, left: ph.getBoundingClientRect().left, end: top - stick };
+      if (m.end <= 0) m = null;
+    };
+    const update = () => {
+      raf = 0;
+      if (!m) return;
+      // trajet en ligne droite, en diagonale vers le bas et la gauche (↙), sur tout le défilement jusqu'à la page 2
+      const s = scrollY, p = Math.min(1, Math.max(0, s / m.end)), e = (p + p * p * (3 - 2 * p)) / 2;
+      // la page 1 s'efface doucement ; le texte de la page 2 n'apparaît qu'une fois l'iPhone posé (rien ne passe dessous)
+      if (frame) frame.style.opacity = Math.max(0, 1 - p / .24).toFixed(3);
+      // le nom du plat et ses icônes (sur le chemin de l'iPhone) partent en premier
+      lowEls.forEach((el) => { el.style.opacity = Math.max(0, 1 - p / .06).toFixed(3); });
+      if (page2) page2.style.opacity = Math.min(1, Math.max(0, p - .85) / .15).toFixed(3);
+      if (p >= 1) { ph.style.transform = ""; ph.classList.remove("is-flying"); }
+      else {
+        ph.classList.add("is-flying");
+        // départ : la place vide de la page 1 (lue à chaque image, elle suit le cadre)
+        const d = dock.getBoundingClientRect(), k = d.height / ph.offsetHeight;
+        const x0 = d.left + (d.width - ph.offsetWidth * k) / 2, y0 = d.top + s;
+        const x = (x0 - m.left) * (1 - e), y = (y0 - m.top) * (1 - e);
+        ph.style.transform = `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px) scale(${(k + (1 - k) * e).toFixed(4)})`;
+      }
+      power(p >= .97 ? true : p < .6 ? false : lit);
+    };
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(update); };
+    const setup = () => { measure(); if (m) update(); };
+    setup();
+    addEventListener("scroll", onScroll, { passive: true });
+    addEventListener("resize", setup);
+    addEventListener("load", setup);
+    document.fonts?.ready.then(setup);
+    if (dock && window.ResizeObserver) new ResizeObserver(onScroll).observe(dock.parentElement);
+    // téléphone (ou mouvement réduit) : pas de voyage, il s'allume dès qu'il est bien visible
+    new IntersectionObserver((en) => { if (!m && en[0].intersectionRatio >= .55) power(true); }, { threshold: [.55] }).observe(ph);
+    // « Commander » / toucher l'écran éteint : on descend jusqu'à ce que l'iPhone soit à sa place
+    const dockPhone = (e) => {
+      if (!m) { power(true); return; }
+      e?.preventDefault();
+      scrollTo({ top: m.end, behavior: reduce ? "auto" : "smooth" });
+    };
+    phOff.addEventListener("click", dockPhone);
+    $$('a[href="#chapati"]').forEach((a) => a.addEventListener("click", (e) => { if (m) dockPhone(e); }));
   }
 
   /* ---------------- Horaires (heure d'Alger) ---------------- */

@@ -295,6 +295,17 @@
   };
   refresh();
 
+  /* Passerelle pour la 1re page : ajoute un plat au même panier que l'iPhone.
+     id = « <catégorie>-<position dans menu-data.js> » (ex. pizza-8), comme dans ITEMS. */
+  window.HCOrder = {
+    add(id, size, supps, qty) {
+      const it = ITEMS[id];
+      if (!it || (it.sizes && !it.sizes.some((s) => s.label === size))) return false;
+      add(it, it.sizes ? size : null, (supps || []).filter((n) => (it.supps || []).some((s) => s.name === n)), Math.max(1, Math.min(20, qty | 0)));
+      return true;
+    }
+  };
+
   /* ---------- écran d'accueil : l'icône (logo) ouvre l'application ---------- */
   const screen = document.getElementById("mphoneScreen");
   const home = document.getElementById("phome");
