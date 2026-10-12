@@ -621,13 +621,6 @@
       e.key === "ArrowRight" ? go(sel + 1, 1) : go(sel - 1, -1);
     });
     render();
-    // plat choisi sur la page de choix de l'intro : on l'affiche directement sur la page 1
-    addEventListener("intro:done", (e) => {
-      const k = KEYS.indexOf(e.detail?.pick);
-      if (k < 0 || k === sel) return;
-      btns[KEYS[sel]].classList.remove("is-on"); btns[KEYS[k]].classList.add("is-on");
-      sel = k; render();
-    }, { once: true });
   }
 
   /* ---------------- iPhone de commande : posé à droite de la page 1, il rejoint sa place

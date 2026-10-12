@@ -26,7 +26,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Anton&family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="preload" as="image" href="assets/img/logo.webp" fetchpriority="high">
   <link rel="preload" as="image" href="assets/img/pizza-ronde.webp">
-  <link rel="stylesheet" href="assets/css/styles.css?v=98">
+  <link rel="stylesheet" href="assets/css/styles.css?v=100">
   <script>document.documentElement.classList.add("js");if(!location.hash)document.documentElement.classList.add("has-intro")</script>
 
   <!-- Données structurées : adresse, horaires et réseaux à compléter (ne pas inventer) -->
@@ -65,37 +65,13 @@
 <body>
   <!-- ======================= INTRO =======================
        1) Le logo s'affiche directement
-       2) « Bienvenue chez nous » s'écrit sous le logo
-       3) Page de choix (fond 22.jpg) : Bol H ou pizza du menu qui flottent
-       4) Petit message selon le choix, puis le site s'ouvre sur la page 1 avec ce plat -->
-  <div class="choice" id="choice" aria-hidden="true">
-    <img class="choice__bg" src="assets/img/fond-choix.webp" alt="" width="1672" height="941">
-    <div class="choice__head">
-      <p class="choice__welcome" id="cw" aria-label="Bienvenue chez nous"></p>
-      <p class="choice__eyebrow">Hocine Chapati · Le goût qui rassemble</p>
-      <h2 class="choice__title">Qu'est-ce qui vous fait <em>envie</em>&nbsp;?</h2>
-    </div>
-    <!-- Bol H collé au bord gauche, pizza du menu collée au bord droit -->
-    <button class="choice__opt choice__opt--left choice__opt--round" type="button" data-pick="bol">
-      <img src="assets/img/bol-rond.webp" alt="" width="800" height="800">
-      <span>Bol H</span>
-    </button>
-    <span class="choice__or" aria-hidden="true">ou</span>
-    <button class="choice__opt choice__opt--right choice__opt--round" type="button" data-pick="pizza">
-      <img src="assets/img/pizza-ronde.webp" alt="" width="800" height="800">
-      <span>Pizza</span>
-    </button>
-    <div class="choice__foot">
-      <p class="choice__msg" id="choiceMsg" aria-live="polite"></p>
-      <button class="choice__all" id="choiceAll" type="button">Voir tout le site</button>
-    </div>
-  </div>
+       2) « Bienvenue chez nous » s'écrit sous le logo, puis le site s'ouvre sur la page 1 -->
   <div class="torch" id="intro" role="dialog" aria-label="Bienvenue chez Hocine Chapati">
     <div class="torch__img"><img src="assets/img/logo.webp" alt="Logo Hocine Chapati" width="320" height="320"></div>
     <p class="torch__welcome" aria-live="polite"><span class="torch__w1" id="w1"></span><span class="torch__w2" id="w2"></span></p>
     <button class="torch__skip" id="introSkip">Entrer <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
   </div>
-  <script src="assets/js/intro.js?v=98"></script>
+  <script src="assets/js/intro.js?v=100"></script>
   <a class="skip" href="#main">Aller au contenu</a>
 
   <!-- ============================ NAVBAR ============================ -->
@@ -448,8 +424,8 @@
     <span>Menu</span>
   </a>
 
-  <script src="assets/js/menu-data.js?v=98" defer></script>
-  <script src="assets/js/main.js?v=98" defer></script>
-  <script src="assets/js/order.js?v=98" defer></script>
+  <script src="assets/js/menu-data.js?v=100" defer></script>
+  <script src="assets/js/main.js?v=100" defer></script>
+  <script src="assets/js/order.js?v=100" defer></script>
 </body>
 </html>
