@@ -1,4 +1,3 @@
 User-agent: *
 Allow: /
-# TODO : remplacer par le vrai domaine
 Sitemap: https://www.hocinechapati.com/sitemap.xml
