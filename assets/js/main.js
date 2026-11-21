@@ -159,41 +159,18 @@
   }
   if ($("#bolGrid")) {
     $("#bolGrid").innerHTML = D.bowls
-      .map((b, i) => plateCard({ name: b.name, desc: `Base ${b.base.toLowerCase()}, garniture ${b.prot.toLowerCase()}.`, labels: D.bowlSizes, prices: b.prices }, i, "bol-rond"))
+      .map((b, i) => plateCard({ name: b.name, desc: b.desc, price: b.price }, i, "bol-rond"))
       .join("");
-    const supp = D.supplementsBol || [];
-    if (supp.length) $("#bolSupp").innerHTML = suppBox([["", supp]]);
-    else {
-      // pas encore de prix de suppléments : on présente la composition du bol (vrais prix)
-      const nb = (n) => n.toLocaleString("fr-FR");
-      const range = D.bowlSizes.map((label, k) => {
-        const all = D.bowls.map((b) => b.prices[k]);
-        return { name: `Taille ${label}`, text: `${nb(Math.min(...all))} – ${nb(Math.max(...all))} DA` };
-      });
-      const base = [...new Set(D.bowls.map((b) => b.base))].join(" ou ");
-      const prot = [...new Set(D.bowls.map((b) => b.prot))].join(", ").replace(/, ([^,]*)$/, " ou $1");
-      $("#bolSupp").innerHTML = suppBox(
-        [["Tailles", range], ["Au choix", [{ name: "Base", text: base }, { name: "Garniture", text: prot }]]],
-        "Composez votre bol", "taille, base et garniture"
-      );
-    }
+    $("#bolSupp").innerHTML = suppBox([["", D.supplementsBol]]);
     marquee($("#bolHS"));
   }
   if ($("#chapatiGrid")) {
-    $("#chapatiGrid").innerHTML = [...D.chapatiS2, ...D.chapatiOriginal]
-      .map((c, i) => plateCard({ name: c.name, desc: c.desc, price: c.price }, i, "chapati-rond"))
+    $("#chapatiGrid").innerHTML = [...D.chapatiS2, ...D.chapatiOriginal].map((c) => [c, "chapati-original"])
+      .map(([c, photo], i) => plateCard({ name: c.name, desc: c.desc, price: c.price }, i, photo))
       .join("");
     $("#chapatiSupp").innerHTML = suppBox([["Chapati Original", D.supplementsOriginal], ["Chapati S-2", D.supplementsS2]]);
     marquee($("#chapatiHS"));
   }
-
-  /* ---------------- Bowls ---------------- */
-  if ($("#bowlRows")) $("#bowlRows").innerHTML = D.bowls
-    .map((b) => `<div class="bowl-table__row" role="row">
-        <span class="bowl-table__name" role="cell">${esc(b.base)}<small>${esc(b.prot)}</small></span>
-        ${b.prices.map((p) => `<span role="cell">${price(p)}</span>`).join("")}
-      </div>`)
-    .join("");
 
   /* ---------------- Menu (menu.html) ----------------
      En-tête façon photo 55, catégories façon photo 44 (colonne crème + vague verte + assiettes) */
@@ -217,18 +194,30 @@
   const orderLink = `<a class="dish__order" href="${TEL}" data-order>Commander <span aria-hidden="true">→</span></a>`;
   const single = (n) => `<span class="dish__price">${da(n)}</span>`;
   const sizes = (labels, prices) => `<div class="dish__sizes">${labels.map((l, j) => `<span><small>${l}</small>${da(prices[j])}</span>`).join("")}</div>`;
+  /* bouton « Ajouter au panier » : même panier que l'iPhone de commande de l'accueil (catalog.js) */
+  const K = window.HCCatalog;
+  const BAG = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1 12H6L5 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>';
+  const addBtn = (src) => {
+    const it = K && K.of(src);
+    return it ? `<button type="button" class="addb" data-add="${it.id}" aria-label="Ajouter au panier : ${esc(it.name)}">${BAG}<span>Ajouter au panier</span></button>` : "";
+  };
   const dish = (o, i) => `
     <article class="dish${i % 2 ? " dish--alt" : ""}">
       ${o.plate}
       <div class="dish__body">
         <h3 class="dish__name">${esc(o.name)}</h3>
         ${o.desc ? `<p class="dish__desc">${esc(o.desc)}</p>` : ""}
-        <div class="dish__foot">${o.price}${orderLink}</div>
+        <div class="dish__foot">${o.price}${orderLink}${addBtn(o.src)}</div>
       </div>
     </article>`;
   const cap = (t) => t.charAt(0).toUpperCase() + t.slice(1);
-  const row = (name, n) => `<li><span>${esc(cap(name))}</span><i aria-hidden="true"></i><b>${da(n)}</b></li>`;
-  const gcard = (title, rows) => `<div class="gcard"><h3 class="gcard__title">${title}</h3><ul class="gcard__rows">${rows}</ul></div>`;
+  const nb = (n) => n.toLocaleString("fr-FR");
+  // prix unique, « dès » (à partir de) ou deux formats (ex. 150 / 250 DA)
+  const amount = (it) => it.prices ? `${it.prices.map(nb).join(" / ")}&nbsp;DA` : `${it.from ? "dès " : ""}${da(it.price)}`;
+  // chaque article des listes a son bouton « Commander » (appel du restaurant, comme les autres boutons)
+  const row = (name, val, desc, src) => `<li><span>${esc(cap(name))}${desc ? `<small>${esc(desc)}</small>` : ""}<span class="gcard__acts"><a class="gcard__order" href="${TEL}" data-order aria-label="Commander : ${esc(cap(name))}">Commander <span aria-hidden="true">→</span></a>${addBtn(src)}</span></span><i aria-hidden="true"></i><b>${val}</b></li>`;
+  const rows = (arr, strip, withDesc = true) => arr.map((it) => row(strip ? it.name.replace(strip, "") : it.name, amount(it), withDesc ? it.desc : "", it)).join("");
+  const gcard = (title, list, foot) => `<div class="gcard"><h3 class="gcard__title">${title}</h3><ul class="gcard__rows">${list}</ul>${foot ? `<p class="gcard__note">${foot}</p>` : ""}</div>`;
   const supCard = (groups) => `
     <div class="mcat__card">
       <h3>Suppléments</h3>
@@ -248,6 +237,33 @@
     </div>`;
   const note = (t) => `<p class="mcat__note">${t}</p>`;
 
+  /* affiches des cartes papier (menu-cartes.js) : chaque plat / prix est une zone cliquable « ajouter au panier » */
+  const CARTES = window.HC_CARTES || {};
+  const BY_NAME = new Map(K ? Object.values(K.ITEMS).map((it) => [it.name, it]) : []);
+  const pct = (v, t) => `${((v / t) * 100).toFixed(3)}%`;
+  const priceOf = (it) => it.sizes ? it.sizes.map((z) => `${z.label} ${z.price} DA`).join(" ou ") : `${it.price} DA`;
+  const carte = (key) => {
+    const c = CARTES[key];
+    if (!c || !K) return "";
+    const W = 1086, H = 1448;
+    return `
+    <figure class="carte${c.plus ? ` carte--plus-${c.plus}` : ""}">
+      ${c.title ? `<h3 class="carte__title">${esc(c.title)}</h3>` : ""}
+      <figcaption class="carte__cap">${BAG}<span>Touchez un plat ou un prix pour l'ajouter au panier</span></figcaption>
+      <div class="carte__img">
+        <img src="assets/img/menu/${c.img}.webp" alt="${esc(c.alt)}" width="${W}" height="${H}" loading="lazy" decoding="async">
+        ${c.spots.map(([n, x, y, w, h, size]) => {
+          const it = BY_NAME.get(n);
+          const z = size && it?.sizes?.find((v) => v.label === size);
+          if (!it || (size && !z)) return "";
+          const cls = `carte__hot${h < 50 ? " carte__hot--row" : ""}${z ? " carte__hot--price" : ""}`;
+          const label = z ? `${it.name} ${z.label}, ${z.price} DA` : `${it.name}, ${priceOf(it)}`;
+          return `<button type="button" class="${cls}" data-add="${it.id}"${z ? ` data-size="${esc(z.label)}"` : ""} style="left:${pct(x, W)};top:${pct(y, H)};width:${pct(w, W)};height:${pct(h, H)}" aria-label="Ajouter au panier : ${esc(label)}"><span class="carte__plus" aria-hidden="true">+</span></button>`;
+        }).join("")}
+      </div>
+    </figure>`;
+  };
+
   /* visuels : chapati-* et pnj-* = photos du client ; pizza-* et bol-* = photos d'illustration */
 
   const RENDER = {
@@ -256,48 +272,179 @@
       feats: [["clock", "Préparé<br>à la commande"], ["heart", "Garniture<br>généreuse"], ["fire", "Servi<br>bien chaud"], ["leaf", "Original<br>ou Saison 2"]],
       card: supCard([["Chapati Original", D.supplementsOriginal], ["Chapati S-2", D.supplementsS2]])
     },
-      `<p class="mcat__sub">Chapati S-2 <small>Saison 2</small></p>` +
-      D.chapatiS2.map((c, i) => dish({ name: c.name, desc: c.desc, price: single(c.price), plate: pic("chapati-rond", "free") }, i)).join("") +
-      gcard("Chapati Original", D.chapatiOriginal.map((c) => row(c.name.replace("Chapati ", ""), c.price)).join(""))),
+      carte("chapati") +
+      carte("s2")),
 
     pizzas: () => layout({
       kicker: "02 · Au four", title: "Pizzas", tag: "gourmandes, à partager",
-      feats: [["oven", "Pâte<br>cuite au four"], ["cheese", "Fromage<br>qui file"], ["size", "3 formats<br>Mini · Normal · Mega"], ["share", "Le format Mega<br>à partager"]],
+      feats: [["oven", "Pâte<br>cuite au four"], ["cheese", "Cheddar<br>& mozzarella"], ["size", "2 formats<br>Standard · Mega"], ["share", "Pizza Pocket<br>dès 400 DA"]],
       card: supCard([["", D.supplementsPizza]])
     },
-      D.pizzas.map((p, i) => dish({ name: p.name, desc: p.desc, price: sizes(D.pizzaSizes, p.prices), plate: pic("pizza-ronde", "round") }, i)).join("") +
-      note("Photos d'illustration.")),
+      carte("pizza") +
+      carte("pocket")),
 
     bowls: () => layout({
-      kicker: "03 · Tout dans un bol", title: "Bol H Chapati", tag: "généreux et bien chaud",
-      feats: [["bowl", "Base Pasta<br>ou Poutine"], ["heart", "Poulet, Viande<br>ou Mixte"], ["size", "Tailles<br>M · L · XL"], ["clock", "Préparé<br>à la commande"]]
+      kicker: "03 · Généreux & fondants", title: "Poutine & Pasta", tag: "sauce fromage qui file",
+      feats: [["bowl", "Poutine<br>ou Pasta"], ["heart", "Poulet, Viande<br>ou Mixte"], ["cheese", "Mozzarella<br>& cheddar"], ["clock", "Préparé<br>à la commande"]],
+      card: supCard([["", D.supplementsBol]])
     },
-      D.bowls.map((b, i) => dish({ name: b.name, desc: `Base ${b.base.toLowerCase()}, garniture ${b.prot.toLowerCase()}.`, price: sizes(D.bowlSizes, b.prices), plate: pic("bol-rond", "free") }, i)).join("") +
-      note("Photos d'illustration.")),
+      carte("bol")),
 
-    formules: () => layout({
-      kicker: "04 · Le repas complet", title: "Formules", tag: "kebab ou maqloub",
-      feats: [["plate", "Formule<br>Kebab"], ["plate", "Formule Maqloub<br>Poulet · Abat · Viande"]]
+    pita: () => layout({
+      kicker: "04 · Street-food", title: "Pita & Gyros", tag: "viande, poulet ou mixte",
+      feats: [["plate", "Viande, poulet<br>ou mixte"], ["leaf", "Salade, tomate<br>chou rouge"], ["heart", "Sauce<br>au choix"], ["fire", "Chicken<br>tenders"]],
+      card: supCard([["", D.supplementsPita]])
     },
-      gcard("Nos formules", D.formules.map((f) => row(f.name.replace("Formule ", ""), f.price)).join(""))),
+      carte("pita")),
+
+    salades: () => layout({
+      kicker: "05 · Fraîcheur", title: "Salades", tag: "pleines de goût",
+      feats: [["leaf", "Ingrédients<br>frais"], ["heart", "Sauces<br>maison"], ["clock", "Préparées<br>à la commande"]]
+    },
+      carte("salades")),
+
+    crepes: () => layout({
+      kicker: "06 · Gourmandises", title: "Crêpes & Pancakes", tag: "à tomber !",
+      feats: [["heart", "Nutella<br>ou Mordjene"], ["leaf", "Banane, fraise<br>kiwi"], ["plate", "Pancakes<br>& mini pancakes"]]
+    },
+      carte("crepes")),
+
+    desserts: () => layout({
+      kicker: "07 · Douceurs", title: "Kunafa & Desserts", tag: "un pur moment de plaisir",
+      feats: [["cheese", "Kunafa<br>croustillante"], ["heart", "Desserts<br>& pâtisseries"], ["share", "Tradition<br>& gourmandise"]]
+    },
+      carte("kunafa") +
+      carte("boissons")),
 
     boissons: () => layout({
-      kicker: "05 · Pour accompagner", title: "Boissons", tag: "fraîches ou gourmandes",
-      feats: [["cup", "Frappuccino"], ["cup", "Milkshakes"], ["cup", "Sodas<br>& jus"], ["cup", "Eau"]]
+      kicker: "08 · Pour accompagner", title: "Boissons", tag: "fraîcheur & saveurs",
+      feats: [["cup", "Cafés<br>& chauds"], ["cup", "Jus naturels<br>& mojitos"], ["cup", "Mocktails<br>& smoothies"], ["cup", "Milkshakes"]]
     },
-      D.boissons.map((g) => gcard(g.group, g.items.map(([n, p]) => row(n, p)).join(""))).join(""))
+      carte("boissons") +
+      D.boissons.filter((g) => !g.items.some((t) => CARTES.boissons?.spots.some(([n]) => n === t[0]))).map((g) => gcard(g.group, g.items.map((t) => row(t[0], da(t[1]), "", t)).join(""), g.note)).join(""))
   };
 
   /* en-tête : deux plats vedettes avec leurs vrais prix */
   const complet = D.chapatiOriginal.find((c) => c.name === "Chapati Complet");
-  const marg = D.pizzas.find((p) => p.name === "Pizza Margherita");
+  const marg = D.pizzas.find((p) => p.name === "Pizza Marguerite");
   $("#mheroPlates").innerHTML = `
-    <figure class="mplate mplate--a"><img src="assets/img/chapati-rond.webp" alt="Chapati doré à la poêle, garni de thon, œuf et fromage" width="800" height="800"></figure>
-    <div class="mglass mglass--a"><p class="mglass__name">${esc(complet.name)}</p><p>${esc(complet.desc)}</p><span class="mglass__price">${da(complet.price)}</span></div>
+    <figure class="mplate mplate--a"><img src="assets/img/chapati-original.webp" alt="Chapati Original doré à la poêle, garni de salami, salade et omelette" width="800" height="800"></figure>
+    <div class="mglass mglass--a"><p class="mglass__name">${esc(complet.name)}</p><p>Thon, œuf, fromage et pâté piquant.</p><span class="mglass__price">${da(complet.price)}</span></div>
     <figure class="mplate mplate--b"><img src="assets/img/pizza-ronde.webp" alt="Pizza garnie, fromage fondant et poivrons" width="800" height="800"></figure>
     <div class="mglass mglass--b"><p class="mglass__name">${esc(marg.name)}</p><p>${esc(marg.desc)}</p><span class="mglass__price">dès ${da(marg.prices[0])}</span></div>`;
 
   const panel = $("#menuPanel");
+
+  /* ---------- panier flottant + animation « à emporter » ----------
+     Le plat s'envole de son assiette jusqu'au sac (panier), qui saute et affiche +1.
+     Le panier est celui de l'iPhone de commande : le sac mène à index.html#panier. */
+  if (K) {
+    const nb2 = (n) => n.toLocaleString("fr-FR").replace(/\u202f/g, "\u00a0");
+    const fab = document.createElement("a");
+    fab.className = "mcart";
+    fab.href = "index.html#panier";
+    fab.innerHTML = `<span class="mcart__bag">${BAG}<span class="mcart__n" hidden>0</span></span><span class="mcart__txt"><b>À emporter</b><small>Panier vide</small></span>`;
+    document.body.append(fab);
+    const count = $(".mcart__n", fab), sub = $(".mcart__txt small", fab);
+    const refreshFab = () => {
+      const { n, sum } = K.totals(K.load());
+      count.textContent = n;
+      count.hidden = !n;
+      fab.classList.toggle("is-full", n > 0);
+      sub.textContent = n ? `${n} article${n > 1 ? "s" : ""} · ${nb2(sum)}\u00a0DA` : "Panier vide";
+      fab.setAttribute("aria-label", n ? `Voir le panier : ${n} article${n > 1 ? "s" : ""}, ${nb2(sum)} DA` : "Panier vide");
+    };
+    refreshFab();
+    addEventListener("storage", (e) => { if (e.key === K.STORE) refreshFab(); });
+    addEventListener("pageshow", refreshFab);
+
+    const EMOJI = { orig: "🌮", s2: "🌮", pizza: "🍕", pocket: "🍕", bol: "🍝", pita: "🥙", form: "🥙", salade: "🥗", crepe: "🥞", pancake: "🥞", kunafa: "🍯", dessert: "🍰", drink: "🥤" };
+    const bump = () => {
+      fab.classList.remove("is-bump"); void fab.offsetWidth; fab.classList.add("is-bump");
+      const plus = document.createElement("span");
+      plus.className = "mcart__plus"; plus.textContent = "+1";
+      fab.append(plus);
+      setTimeout(() => plus.remove(), 900);
+    };
+    const fly = (btn, it) => {
+      const plate = btn.closest(".dish")?.querySelector(".dish__plate");
+      const from = (plate || btn).getBoundingClientRect();
+      const to = $(".mcart__bag", fab).getBoundingClientRect();
+      if (reduce || !document.body.animate) { refreshFab(); bump(); return; }
+      // le jeton qui vole : la photo du plat (assiette ronde) ou une mini-assiette avec un emoji
+      const big = btn.classList.contains("carte__hot") && from.width / from.height < 3.2;
+      const size = plate ? Math.min(from.width, 150) : big ? Math.round(Math.min(140, Math.max(70, from.width, from.height))) : 54;
+      const tok = document.createElement("div");
+      tok.className = "flyer";
+      tok.style.width = tok.style.height = `${size}px`;
+      const img = plate?.querySelector("img");
+      const hot = btn.classList.contains("carte__hot") && from.width / from.height < 3.2 ? btn : null;
+      if (img) tok.innerHTML = `<img src="${img.currentSrc || img.src}" alt="">`;
+      else if (hot) {
+        // morceau de l'affiche (le plat cliqué) qui s'envole
+        const poster = hot.parentElement.querySelector("img"), pr = poster.getBoundingClientRect();
+        const k = size / Math.max(from.width, from.height);
+        tok.classList.add("flyer--crop");
+        tok.innerHTML = `<img src="${poster.currentSrc || poster.src}" alt="" style="width:${pr.width * k}px;height:${pr.height * k}px;left:${(pr.left - from.left) * k + (size - from.width * k) / 2}px;top:${(pr.top - from.top) * k + (size - from.height * k) / 2}px">`;
+      }
+      else { tok.classList.add("flyer--emoji"); tok.textContent = EMOJI[it.cat] || "🛍️"; }
+      document.body.append(tok);
+      const sx = from.left + from.width / 2 - size / 2, sy = from.top + from.height / 2 - size / 2;
+      const ex = to.left + to.width / 2 - size / 2, ey = to.top + to.height / 2 - size / 2;
+      const mx = (sx + ex) / 2, my = Math.min(sy, ey) - Math.max(90, Math.abs(ex - sx) * 0.25);
+      const end = 22 / size;
+      if (plate) { plate.classList.remove("is-taken"); void plate.offsetWidth; plate.classList.add("is-taken"); }
+      const flight = tok.animate([
+        { transform: `translate(${sx}px, ${sy}px) scale(1) rotate(0deg)`, opacity: 1 },
+        { transform: `translate(${sx}px, ${sy - 24}px) scale(1.12) rotate(-12deg)`, opacity: 1, offset: 0.16 },
+        { transform: `translate(${mx}px, ${my}px) scale(${(1 + end) / 2}) rotate(160deg)`, opacity: 1, offset: 0.58 },
+        { transform: `translate(${ex}px, ${ey}px) scale(${end}) rotate(340deg)`, opacity: 0.4 }
+      ], { duration: 950, easing: "cubic-bezier(.45,0,.25,1)", fill: "forwards" });
+      // le plat arrive dans le sac à la fin du vol (ou au plus tard après 1,2 s si l'animation est interrompue)
+      let landed = false;
+      const land = () => { if (landed) return; landed = true; tok.remove(); refreshFab(); bump(); };
+      flight.finished.then(land, land);
+      setTimeout(land, 1200);
+    };
+    const addToCart = (btn, it, size) => {
+      const cart = K.load();
+      K.addLine(cart, it, size, [], 1);
+      K.save(cart);
+      btn.classList.remove("is-done"); void btn.offsetWidth; btn.classList.add("is-done");
+      fly(btn, it);
+    };
+    const closePicks = () => $$(".addpick", panel).forEach((p) => { p.previousElementSibling?.setAttribute("aria-expanded", "false"); p.remove(); });
+
+    panel.addEventListener("click", (e) => {
+      // choix du format / de la garniture
+      const chip = e.target.closest("[data-pick]");
+      if (chip) {
+        const box = chip.closest(".addpick");
+        addToCart(box.previousElementSibling || chip, K.ITEMS[box.dataset.for], chip.dataset.pick);
+        closePicks();
+        return;
+      }
+      const btn = e.target.closest("[data-add]");
+      if (!btn) return;
+      const it = K.ITEMS[btn.dataset.add];
+      if (!it) return;
+      if (btn.dataset.size) { closePicks(); addToCart(btn, it, btn.dataset.size); return; }
+      if (!it.sizes) { addToCart(btn, it, null); return; }
+      // article à plusieurs formats : petite liste de choix sous le bouton
+      const open = btn.nextElementSibling?.classList.contains("addpick");
+      closePicks();
+      if (open) return;
+      btn.setAttribute("aria-expanded", "true");
+      btn.insertAdjacentHTML("afterend", `<span class="addpick" data-for="${it.id}" role="group" aria-label="${esc(it.sizeLabel || "Format")} : ${esc(it.name)}">${it.sizes.map((z) => `<button type="button" data-pick="${esc(z.label)}">${esc(z.label)}<b>${nb2(z.price)}\u00a0DA</b></button>`).join("")}</span>`);
+      if (btn.classList.contains("carte__hot")) {
+        const pick = btn.nextElementSibling;
+        pick.classList.add("addpick--pop");
+        pick.style.left = btn.style.left;
+        pick.style.top = `calc(${btn.style.top} + ${btn.style.height} + 4px)`;
+      }
+      btn.nextElementSibling.querySelector("button").focus({ preventScroll: true });
+    });
+  }
   const tabs = $$(".tab");
   const ink = $(".tabs__ink");
   const moveInk = (t) => {
@@ -552,14 +699,14 @@
   if ($("#hxArc")) {
     const nb = (n) => n.toLocaleString("fr-FR").replace(/\u202f/g, "\u00a0");
     const da2 = (n) => `${nb(n)}\u00a0DA`;
-    const iPz = D.pizzas.findIndex((x) => x.name === "Pizza Maison");
+    const iPz = D.pizzas.findIndex((x) => x.name === "Pizza Spécial");
     const iCh = D.chapatiS2.findIndex((x) => x.name === "Chapati S-2 Mixte");
-    const iBo = D.bowls.findIndex((x) => x.name === "Bol Poutine Mixte");
+    const iBo = D.bowls.findIndex((x) => x.name === "Poutine Mixte");
     const pz = D.pizzas[iPz], ch = D.chapatiS2[iCh], bo = D.bowls[iBo];
     const DISH = {
       chapati: { id: `s2-${iCh}`, name: ch.name, desc: ch.desc, from: da2(ch.price), photo: "chapati-frites", price: ch.price, supps: D.supplementsS2 },
       pizza: { id: `pizza-${iPz}`, name: pz.name, desc: pz.desc, from: `dès ${da2(pz.prices[0])}`, photo: "pizza-ronde", sizes: D.pizzaSizes.map((l, k) => ({ label: l, price: pz.prices[k] })), supps: D.supplementsPizza },
-      bol: { id: `bol-${iBo}`, name: bo.name, desc: `Base ${bo.base.toLowerCase()}, garniture ${bo.prot.toLowerCase()}.`, from: `dès ${da2(bo.prices[0])}`, photo: "bol-rond", sizes: D.bowlSizes.map((l, k) => ({ label: l, price: bo.prices[k] })), supps: D.supplementsBol || [] }
+      bol: { id: `bol-${iBo}`, name: bo.name, desc: bo.desc, from: da2(bo.price), photo: "bol-rond", price: bo.price, supps: D.supplementsBol }
     };
     const KEYS = ["chapati", "pizza", "bol"];
     const btns = Object.fromEntries($$(".hx__d").map((b) => [b.dataset.key, b]));

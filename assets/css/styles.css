@@ -360,7 +360,7 @@ body::after {
 .pcard__body { padding: 20px 22px 22px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
 .pcard__body h3 { font-family: var(--f-display); font-weight: 400; text-transform: uppercase; font-size: 1.5rem; line-height: 1.05; }
 .pcard__body p { color: #57534E; font-size: .9rem; }
-.sizes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: auto; padding-top: 14px; }
+.sizes { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 6px; margin-top: auto; padding-top: 14px; }
 .sizes span { display: flex; flex-direction: column; align-items: center; padding: 8px 4px; border-radius: 10px; background: var(--cream); font-size: .64rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: #78716C; }
 .sizes b { font-family: var(--f-display); font-weight: 400; font-size: 1.12rem; letter-spacing: .02em; color: var(--red); }
 .pcard__btn {
@@ -763,7 +763,7 @@ body::after {
 .spec .h2 { text-shadow: 0 4px 30px rgba(40,4,8,.5); }
 .spec .s2, .spec .orig, .spec .pz { background: rgba(25,6,8,.8); border-color: rgba(255,247,237,.16); }
 .pz { border: 1px solid var(--line); border-radius: var(--r-md); padding: clamp(18px, 3vw, 28px); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
-.pz__row { display: grid; grid-template-columns: 1.6fr repeat(3, 1fr); align-items: baseline; gap: 8px; padding: 11px 0; border-bottom: 1px dashed var(--line); }
+.pz__row { display: grid; grid-template-columns: 1.8fr repeat(2, 1fr); align-items: baseline; gap: 8px; padding: 11px 0; border-bottom: 1px dashed var(--line); }
 .pz__row .price { text-align: right; font-size: 1.15rem; }
 .pz__row--head { font-size: .66rem; font-weight: 800; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); padding-top: 6px; }
 .pz__row--head span:not(:first-child) { text-align: right; }
@@ -777,7 +777,7 @@ body::after {
   .spec__spacer { display: none; }
 }
 @media (max-width: 600px) {
-  .pz__row { grid-template-columns: 1.3fr repeat(3, 1fr); }
+  .pz__row { grid-template-columns: 1.5fr repeat(2, 1fr); }
   .pz__row .price { font-size: 1rem; }
   .pz__name { font-size: .86rem; }
 }
@@ -1329,6 +1329,13 @@ body::after {
 .gcard__title { margin-bottom: 8px; font-family: var(--f-script); font-weight: 400; font-size: 2rem; line-height: 1.1; color: var(--mg-yellow); }
 .gcard__rows li { display: flex; align-items: baseline; gap: 10px; padding: 8px 0; font-size: .95rem; font-weight: 600; border-bottom: 1px solid rgba(255,255,255,.12); }
 .gcard__rows li:last-child { border-bottom: 0; }
+.gcard__rows:empty { display: none; }
+.gcard__rows span small { display: block; margin-top: 3px; font-size: .78rem; font-weight: 500; line-height: 1.4; color: rgba(255,255,255,.7); }
+.gcard__rows b s { margin-left: 4px; font-size: .85rem; color: rgba(255,255,255,.55); }
+.gcard__order { display: inline-block; margin-top: 7px; padding-bottom: 1px; border-bottom: 1.5px solid rgba(255,255,255,.4); font-size: .64rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: #fff; transition: color .3s, border-color .3s; }
+.gcard__order:hover { color: var(--mg-yellow); border-color: var(--mg-yellow); }
+.gcard__order span { display: inline; }
+.gcard__note { margin-top: 10px; font-size: .78rem; font-weight: 600; line-height: 1.45; color: rgba(255,255,255,.75); }
 .gcard__rows i { flex: 1; min-width: 12px; border-bottom: 1.5px dotted rgba(255,255,255,.35); transform: translateY(-4px); }
 .gcard__rows b { font-family: var(--f-display); font-weight: 400; font-size: 1.18rem; white-space: nowrap; color: var(--mg-yellow); }
 .mcat__note { position: relative; z-index: 1; margin-left: calc(var(--pl) / 2 + 44px); font-size: .76rem; color: rgba(255,255,255,.6); }
@@ -2251,3 +2258,163 @@ body::after {
 @media (max-width: 960px) { .mapdock { display: none; } }
 @media (min-width: 961px) { .find__device { width: auto; } }
 @media (min-width: 961px) { .find__device { justify-self: start; } }
+
+/* ==========================================================================
+   MENU — « Ajouter au panier » + panier flottant + animation « à emporter »
+   ========================================================================== */
+.addb { display: inline-flex; align-items: center; gap: 7px; padding: 8px 14px 8px 11px; border: 0; border-radius: 999px; background: #F6C945; color: #1B2A0E; font: inherit; font-size: .7rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; cursor: pointer; box-shadow: 0 6px 14px -6px rgba(0,0,0,.45); transition: transform .25s var(--ease), background-color .25s; }
+.addb svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.addb:hover { background: #FFDA6B; transform: translateY(-1px); }
+.addb:active { transform: scale(.94); }
+.addb[aria-expanded="true"] { background: #fff; }
+.addb.is-done { animation: addb-pop .45s var(--ease); }
+@keyframes addb-pop { 40% { transform: scale(.88); } 70% { transform: scale(1.08); } }
+.gcard__acts { display: flex !important; flex-wrap: wrap; align-items: center; gap: 8px 16px; margin-top: 8px; }
+.gcard__acts .gcard__order { margin-top: 0; }
+.gcard__acts .addb { padding: 6px 12px 6px 9px; font-size: .62rem; }
+.gcard__acts .addb svg { width: 14px; height: 14px; }
+
+/* choix du format (Standard / Mega, Viande / Poulet / Mixte…) */
+.addpick { display: flex; flex-wrap: wrap; gap: 6px; flex-basis: 100%; animation: addpick-in .3s var(--ease); }
+.gcard__acts .addpick { flex-basis: 100%; }
+.addpick button { display: inline-flex; align-items: baseline; gap: 6px; padding: 7px 12px; border: 1.5px solid rgba(255,255,255,.55); border-radius: 999px; background: rgba(255,255,255,.1); color: #fff; font: inherit; font-size: .74rem; font-weight: 700; cursor: pointer; transition: background-color .2s, color .2s, border-color .2s; }
+.addpick button b { font-family: var(--f-display); font-weight: 400; font-size: .95rem; color: #F6C945; }
+.addpick button:hover, .addpick button:focus-visible { background: #F6C945; border-color: #F6C945; color: #1B2A0E; }
+.addpick button:hover b, .addpick button:focus-visible b { color: #1B2A0E; }
+@keyframes addpick-in { from { opacity: 0; transform: translateY(-6px); } }
+
+/* l'assiette « part » : elle plonge un instant quand le plat s'envole */
+.dish__plate.is-taken { animation: plate-take .7s var(--ease); }
+@keyframes plate-take { 25% { transform: scale(.9); } 60% { transform: scale(1.04); } }
+
+/* le plat qui vole jusqu'au sac */
+.flyer { position: fixed; left: 0; top: 0; z-index: 300; pointer-events: none; border-radius: 50%; will-change: transform, opacity; filter: drop-shadow(0 12px 18px rgba(0,0,0,.45)); }
+.flyer img { width: 100%; height: 100%; object-fit: contain; border-radius: 50%; }
+.flyer--emoji { display: grid; place-items: center; background: radial-gradient(circle at 35% 30%, #3a3a3a, #111 70%); border: 3px solid #F6C945; font-size: 28px; line-height: 1; }
+
+/* sac « À emporter » (panier), en bas à droite */
+.mcart { position: fixed; z-index: 65; right: 20px; bottom: calc(20px + env(safe-area-inset-bottom)); display: flex; align-items: center; gap: 10px; padding: 8px 18px 8px 8px; border-radius: 999px; background: #141210; color: #FBF4EA; border: 2px solid #F6C945; box-shadow: 0 16px 30px -10px rgba(0,0,0,.6); text-decoration: none; transition: transform .35s var(--ease), opacity .3s; }
+.mcart:hover { transform: translateY(-2px); }
+.mcart__bag { position: relative; display: grid; place-items: center; width: 46px; height: 46px; border-radius: 50%; background: #F6C945; color: #1B2A0E; }
+.mcart__bag svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; transform-origin: 50% 20%; }
+.mcart__n { position: absolute; top: -6px; right: -6px; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 999px; background: #D9281C; color: #fff; font-size: .72rem; font-weight: 800; line-height: 22px; text-align: center; border: 2px solid #141210; }
+.mcart__n[hidden] { display: none; }
+.mcart__txt { display: flex; flex-direction: column; line-height: 1.15; }
+.mcart__txt b { font-family: var(--f-display); font-weight: 400; font-size: 1.05rem; letter-spacing: .04em; text-transform: uppercase; color: #F6C945; }
+.mcart__txt small { font-size: .74rem; font-weight: 600; color: rgba(251,244,234,.8); }
+.mcart.is-bump .mcart__bag { animation: bag-catch .6s var(--ease); }
+.mcart.is-bump .mcart__bag svg { animation: bag-shake .6s ease; }
+@keyframes bag-catch { 30% { transform: scale(1.25) translateY(3px); } 55% { transform: scale(.92); } 80% { transform: scale(1.06); } }
+@keyframes bag-shake { 20% { transform: rotate(-14deg); } 45% { transform: rotate(10deg); } 70% { transform: rotate(-5deg); } }
+.mcart__plus { position: absolute; left: 22px; top: -4px; font-family: var(--f-display); font-size: 1.2rem; color: #F6C945; pointer-events: none; animation: plus-up .9s ease forwards; }
+@keyframes plus-up { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(-34px); } }
+.has-gate .mcart, .menu-open .mcart { opacity: 0; pointer-events: none; }
+@media (max-width: 960px) {
+  /* le bouton rond « Menu » est à droite : le sac passe à gauche */
+  .mcart { right: auto; left: 16px; bottom: calc(16px + env(safe-area-inset-bottom)); padding: 6px 14px 6px 6px; }
+  .mcart__bag { width: 42px; height: 42px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mcart.is-bump .mcart__bag, .mcart.is-bump .mcart__bag svg, .dish__plate.is-taken, .addb.is-done, .addpick { animation: none; }
+}
+
+/* ==========================================================================
+   MENU — affiches des cartes papier, chaque plat / prix est cliquable
+   ========================================================================== */
+.carte { position: relative; z-index: 1; margin: 0 0 28px calc(var(--pl, 0px) / 2 + 44px); max-width: 680px; }
+.carte__cap { display: inline-flex; align-items: center; gap: 8px; margin-bottom: 10px; padding: 8px 14px; border-radius: 999px; background: #F6C945; color: #1B2A0E; font-size: .74rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; box-shadow: 0 8px 18px -8px rgba(0,0,0,.5); }
+.carte__cap svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.carte__img { position: relative; border-radius: 18px; overflow: hidden; box-shadow: 0 24px 50px -18px rgba(0,0,0,.7); background: #111; }
+.carte__img > img { display: block; width: 100%; height: auto; }
+.carte__hot { position: absolute; padding: 0; border: 0; border-radius: 10px; background: transparent; cursor: pointer; transition: background-color .2s, box-shadow .2s; -webkit-tap-highlight-color: transparent; }
+.carte__hot:hover, .carte__hot:focus-visible { background: rgba(246,201,69,.16); box-shadow: inset 0 0 0 2px #F6C945, 0 0 18px rgba(246,201,69,.35); outline: none; }
+.carte__hot--row { border-radius: 5px; }
+/* petit « + » jaune : toujours visible sur les grandes zones, au survol sur les lignes de liste */
+.carte__plus { position: absolute; top: 6px; right: 6px; display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: #F6C945; color: #1B2A0E; font-size: 18px; font-weight: 800; line-height: 1; box-shadow: 0 4px 10px rgba(0,0,0,.45); transition: transform .2s var(--ease); }
+.carte__hot:hover .carte__plus { transform: scale(1.15); }
+.carte--plus-bl .carte__plus { top: auto; right: auto; bottom: 8px; left: 8px; }
+.carte__hot--row .carte__plus { display: none; }   /* lignes de liste : le surlignage suffit */
+.carte__hot.is-done { animation: hot-flash .6s ease; }
+@keyframes hot-flash { 0% { background: rgba(246,201,69,.55); } 100% { background: transparent; } }
+/* choix du format posé sous la zone cliquée */
+.addpick--pop { position: absolute; z-index: 3; padding: 8px; border-radius: 14px; background: rgba(20,18,16,.94); box-shadow: 0 14px 30px -10px rgba(0,0,0,.7); flex-basis: auto; }
+/* jeton qui vole : morceau de l'affiche */
+.flyer--crop { overflow: hidden; border-radius: 18px; border: 3px solid #F6C945; background: #111; }
+.flyer--crop img { position: absolute; max-width: none; border-radius: 0; object-fit: fill; }
+@media (max-width: 760px) {
+  .carte { margin-left: 0; margin-right: 0; }
+  .carte__img { border-radius: 12px; }
+  .carte__plus { width: 20px; height: 20px; font-size: 15px; top: 4px; right: 4px; }
+  .carte--plus-bl .carte__plus { top: auto; right: auto; bottom: 4px; left: 4px; }
+}
+/* nom du menu au-dessus de chaque affiche (ex. « Chapati Original ») */
+.carte__title { margin: 6px 0 12px; font-family: var(--f-script, "Yellowtail", cursive); font-weight: 400; font-size: clamp(2.1rem, 3.4vw, 2.8rem); line-height: 1.05; color: #F6C945; text-shadow: 0 3px 12px rgba(0,0,0,.35); }
+.carte + .carte { margin-top: 18px; }
+/* prix cliquables (Standard / Mega, 1 / 2 personnes) : pas de « + », surlignage au survol */
+.carte__hot--price .carte__plus, .carte--plus-none .carte__plus { display: none; }
+.carte__hot--price { border-radius: 8px; }
+@media (max-width: 760px) { .carte__title { font-size: 2rem; margin-bottom: 8px; } }
+
+/* ==========================================================================
+   PAGE MENU — thème ROUGE / BLANC / NOIR (aux couleurs des cartes papier)
+   Remplace le vert et le jaune de la page Menu. Pour revenir au vert : supprimer ce bloc.
+   ========================================================================== */
+.page-menu {
+  --mg-900: #0E0D0C;   /* noir */
+  --mg-700: #111010;   /* titres sur blanc */
+  --mg-600: #D7191F;   /* rouge */
+  --mg-500: #C8161D;   /* vague rouge */
+  --mg-400: #D7191F;
+  --mg-300: #E3241B;   /* rouge vif */
+  --mg-cream: #FFFFFF; /* blanc */
+  --mg-sage: #F3F1EE;  /* gris très clair (carte suppléments) */
+  --mg-yellow: #FFFFFF;
+  --hc-red: #D7191F;
+  --hc-red-dark: #A3110F;
+}
+/* en-tête : noir + bande rouge */
+.page-menu .mhero__band { background: linear-gradient(180deg, #E3241B, #B3120E); }
+.page-menu .mhero__script { color: var(--hc-red); }
+.page-menu .mplate { box-shadow: 0 0 0 clamp(10px, 1.4vw, 18px) rgba(0,0,0,.45), 0 40px 60px -25px rgba(0,0,0,.75); }
+.page-menu .mhero__order { color: #fff; box-shadow: 0 0 0 4px var(--mg-900), 0 0 0 6px #fff, 0 18px 30px -12px rgba(0,0,0,.6); }
+.page-menu .mhero__order:hover { background: #fff; color: var(--hc-red); }
+/* onglets */
+.page-menu .mtabs { background: rgba(14,13,12,.95); }
+.page-menu .mtabs .tab.is-active { color: #fff; }
+.page-menu .mtabs .tabs__ink { background: var(--hc-red); }
+/* colonne blanche */
+.page-menu .mcat__feats li, .page-menu .mcat__card h3, .page-menu .mcat__card li { color: #111010; }
+.page-menu .mcat__feats svg { stroke: var(--hc-red); }
+.page-menu .mcat__card { border: 1px solid #E6E1DB; }
+.page-menu .mcat__card h3 { border-bottom-color: rgba(0,0,0,.15); }
+.page-menu .mcat__card b { color: var(--hc-red); }
+/* vague rouge derrière les affiches */
+.page-menu .mcat__green { background: linear-gradient(180deg, #D7191F, #B3120E); }
+.page-menu .mcat__green::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 56 640' preserveAspectRatio='none'%3E%3Cpath d='M56 0H28C0 110 56 210 28 320C0 430 56 530 28 640H56Z' fill='%23D7191F'/%3E%3C/svg%3E");
+}
+/* affiches */
+.page-menu .carte__title { color: #fff; text-shadow: 0 3px 14px rgba(0,0,0,.45); }
+.page-menu .carte__cap { background: #0E0D0C; color: #fff; }
+.page-menu .carte__img { box-shadow: 0 24px 50px -16px rgba(0,0,0,.75), 0 0 0 3px rgba(0,0,0,.85); }
+.page-menu .carte__hot:hover, .page-menu .carte__hot:focus-visible { background: rgba(255,255,255,.16); box-shadow: inset 0 0 0 2px #fff, 0 0 18px rgba(255,255,255,.35); }
+.page-menu .carte__hot.is-done { animation-name: hot-flash-w; }
+@keyframes hot-flash-w { 0% { background: rgba(255,255,255,.55); } 100% { background: transparent; } }
+.page-menu .carte__plus { background: #fff; color: var(--hc-red); }
+.page-menu .addpick button b { color: #fff; }
+.page-menu .addpick button:hover, .page-menu .addpick button:focus-visible { background: #fff; border-color: #fff; color: var(--hc-red); }
+.page-menu .addpick button:hover b, .page-menu .addpick button:focus-visible b { color: var(--hc-red); }
+.page-menu .addb { background: #fff; color: var(--hc-red); }
+.page-menu .addb:hover { background: #F3F1EE; }
+.page-menu .addb[aria-expanded="true"] { background: #0E0D0C; color: #fff; }
+.page-menu .dish__order:hover, .page-menu .gcard__order:hover { color: #0E0D0C; border-color: #0E0D0C; }
+/* vol + sac « À emporter » */
+.page-menu .flyer--crop { border-color: #fff; }
+.page-menu .flyer--emoji { border-color: var(--hc-red); }
+.page-menu .mcart { background: #0E0D0C; border-color: var(--hc-red); }
+.page-menu .mcart__bag { background: var(--hc-red); color: #fff; }
+.page-menu .mcart__n { background: #fff; color: var(--hc-red); border-color: #0E0D0C; }
+.page-menu .mcart__txt b, .page-menu .mcart__plus { color: #fff; }
+.page-menu .fab-menu { border-color: var(--hc-red); box-shadow: 0 0 0 4px rgba(215,25,31,.2), 0 16px 30px -10px rgba(0,0,0,.7); }
+.page-menu .fab-menu svg { stroke: #fff; }
+@media (max-width: 760px) { .page-menu .carte__title { margin-left: 44px; } }

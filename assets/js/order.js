@@ -4,7 +4,7 @@
    Les prix viennent de menu-data.js ; le panier est gardé dans le navigateur du client. */
 (() => {
   const app = document.getElementById("papp");
-  if (!app || !window.HC) return;
+  if (!app || !window.HC || !window.HCCatalog) return;
   const D = window.HC;
   const WA = D.phoneIntl.replace(/\D/g, "");
   const $ = (s, c = app) => c.querySelector(s);
@@ -23,43 +23,18 @@
     wa: '<svg viewBox="0 0 24 24" aria-hidden="true" class="is-fill"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.4.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.2 2.2 2.2 0 0 0 .1-1.2c0-.1-.2-.2-.4-.3Z"/></svg>'
   };
 
-  /* ---------- catalogue (tiré de menu-data.js) ---------- */
-  const CH = [["pnj-chapati", 1], ["chapati-close"], ["chapati-mid"], ["chapati-right"], ["chapati-hero"]];
-  const PZ = [["pnj-pizza", 1], ["pizza-1"], ["pizza-2"], ["pizza-3"], ["pizza-4"], ["pizza-5"]];
-  const bowlImg = (b) => [b.base === "Poutine" ? "bol-poutine" : b.prot === "Viande" ? "bol-pasta-viande" : "bol-pasta"];
-  const sized = (labels, prices) => labels.map((label, i) => ({ label, price: prices[i] }));
-  const CATS = [
-    { id: "s2", label: "Chapati S-2", sub: "Saison 2", items: D.chapatiS2.map((c, i) => ({ name: c.name, desc: c.desc, price: c.price, supps: D.supplementsS2, img: CH[i % CH.length] })) },
-    { id: "orig", label: "Chapati Original", items: D.chapatiOriginal.map((c, i) => ({ name: c.name, desc: c.desc, price: c.price, supps: D.supplementsOriginal, img: CH[(i + 1) % CH.length] })) },
-    { id: "pizza", label: "Pizzas", sub: "Mini · Normal · Mega", items: D.pizzas.map((p, i) => ({ name: p.name, desc: p.desc, sizes: sized(D.pizzaSizes, p.prices), supps: D.supplementsPizza, img: PZ[i % PZ.length] })) },
-    { id: "bol", label: "Bol H Chapati", sub: "M · L · XL", items: D.bowls.map((b) => ({ name: b.name, desc: `Base ${b.base.toLowerCase()}, garniture ${b.prot.toLowerCase()}.`, sizes: sized(D.bowlSizes, b.prices), img: bowlImg(b) })) },
-    { id: "form", label: "Formules", items: D.formules.map((f) => ({ name: f.name, price: f.price, img: ["logo", 1] })) },
-    { id: "drink", label: "Boissons", items: D.boissons.flatMap((g) => g.items.map(([name, price]) => ({ name, price, desc: g.group }))) }
-  ];
-  const ITEMS = {};
-  CATS.forEach((c) => c.items.forEach((it, i) => { it.id = `${c.id}-${i}`; ITEMS[it.id] = it; }));
-  const fromPrice = (it) => (it.sizes ? `dès ${da(Math.min(...it.sizes.map((s) => s.price)))}` : da(it.price));
+  /* ---------- catalogue et panier partagés (catalog.js) ---------- */
+  const K = window.HCCatalog;
+  const { CATS, ITEMS, info } = K;
+  const fromPrice = (it) => (it.sizes ? `${new Set(it.sizes.map((s) => s.price)).size > 1 ? "dès " : ""}${da(Math.min(...it.sizes.map((s) => s.price)))}` : `${it.from ? "dès " : ""}${da(it.price)}`);
   const pic = (it, cls) => it.img
     ? `<img class="${cls}${it.img[1] ? ` ${cls}--cut` : ""}" src="assets/img/${it.img[0]}.webp" alt="" width="96" height="96" loading="lazy" decoding="async">`
     : `<span class="${cls} ${cls}--icon">${ICON.cup}</span>`;
 
-  /* ---------- panier (gardé dans ce navigateur) ---------- */
-  const STORE = "hc-panier-v1";
-  let cart = [];
-  try { const v = JSON.parse(localStorage.getItem(STORE)); if (Array.isArray(v)) cart = v; } catch { /* stockage indisponible */ }
-  const save = () => { try { localStorage.setItem(STORE, JSON.stringify(cart)); } catch { /* ignoré */ } };
-  // le prix est toujours recalculé depuis la carte (jamais depuis le stockage)
-  const info = (l) => {
-    const it = ITEMS[l.id];
-    if (!it) return null;
-    const base = it.sizes ? it.sizes.find((s) => s.label === l.size)?.price : it.price;
-    if (base == null) return null;
-    const supps = (it.supps || []).filter((s) => l.supps.includes(s.name));
-    const unit = base + supps.reduce((t, s) => t + s.price, 0);
-    return { it, supps, unit, total: unit * l.qty };
-  };
-  cart = cart.filter((l) => l && l.qty > 0 && Array.isArray(l.supps) && info(l));
-  const totals = () => cart.reduce((t, l) => { const i = info(l); return { n: t.n + l.qty, sum: t.sum + i.total }; }, { n: 0, sum: 0 });
+  /* ---------- panier (gardé dans ce navigateur, partagé avec la page Menu) ---------- */
+  let cart = K.load();
+  const save = () => K.save(cart);
+  const totals = () => K.totals(cart);
 
   /* ---------- squelette de l'app ---------- */
   const list = $("#pappList"), cats = $("#pappCats"), badge = $("#pappBadge"), cartBtn = $("#pappCartBtn");
@@ -79,7 +54,7 @@
           </div>
           <button class="pitem__add" type="button" aria-label="Ajouter ${esc(it.name)}">${ICON.plus}</button>
         </article>`).join("")}
-    </section>`).join("") + `<p class="papp__end">Photos des pizzas et des bols : illustrations.</p>`;
+    </section>`).join("") + `<p class="papp__end">Photos des pizzas, poutines et pastas : illustrations.</p>`;
 
   // statut ouvert / fermé (calculé par main.js à l'heure d'Alger)
   const hs = document.getElementById("hoursStatus");
@@ -144,7 +119,7 @@
         <div><h3 id="pappSheetTitle">${esc(it.name)}</h3>${it.desc ? `<p>${esc(it.desc)}</p>` : ""}</div>
         <button type="button" class="psheet__x" data-close aria-label="Fermer">${ICON.close}</button>
       </div>
-      ${it.sizes ? `<fieldset class="popt"><legend>Taille <em>Obligatoire</em></legend>
+      ${it.sizes ? `<fieldset class="popt"><legend>${esc(it.sizeLabel || "Taille")} <em>Obligatoire</em></legend>
         ${it.sizes.map((s, i) => `<label class="popt__row"><input type="radio" name="psize" value="${esc(s.label)}"${i ? "" : " checked"}><span>${esc(s.label)}</span><b>${da(s.price)}</b></label>`).join("")}
       </fieldset>` : ""}
       ${it.supps ? `<fieldset class="popt"><legend>Suppléments <em>Facultatif</em></legend>
@@ -181,10 +156,7 @@
     toastT = setTimeout(() => toastEl.classList.remove("is-on"), 1600);
   };
   const add = (it, size, supps, qty) => {
-    const key = [it.id, size || "", [...supps].sort().join("+")].join("|");
-    const line = cart.find((l) => l.key === key);
-    if (line) line.qty = Math.min(50, line.qty + qty);
-    else cart.push({ key, id: it.id, size, supps, qty });
+    K.addLine(cart, it, size, supps, qty);
     save();
     refresh();
     toast(`${qty > 1 ? `${qty} × ` : ""}${it.name} ajouté ✓`);
@@ -305,6 +277,14 @@
       return true;
     }
   };
+
+  if (location.hash === "#panier") {
+    const go = () => {
+      document.getElementById("chapati")?.scrollIntoView({ behavior: "auto", block: "start" });
+      setTimeout(() => renderCart(), 700);
+    };
+    if (document.readyState === "complete") go(); else addEventListener("load", go, { once: true });
+  }
 
   /* ---------- écran d'accueil : l'icône (logo) ouvre l'application ---------- */
   const screen = document.getElementById("mphoneScreen");

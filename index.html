@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Hocine Chapati Tizi Ouzou — Chapatis, Pizzas & Bol H Chapati</title>
-  <meta name="description" content="Hocine Chapati à Tizi Ouzou : chapatis généreux, pizzas gourmandes et Bol H Chapati préparés à la commande. Sur place, à emporter et livraison rapide. Commandez au 0556 72 56 81.">
+  <title>Hocine Chapati Tizi Ouzou — Chapatis, Pizzas, Poutine & Desserts</title>
+  <meta name="description" content="Hocine Chapati à Tizi Ouzou : chapatis généreux, pizzas gourmandes, poutine &amp; pasta, pita &amp; gyros et desserts préparés à la commande. Sur place, à emporter et livraison rapide. Commandez au 0556 72 56 81.">
   <meta name="theme-color" content="#0B0908">
   <link rel="canonical" href="https://www.hocinechapati.com/">
 
@@ -12,7 +12,7 @@
   <meta property="og:type" content="restaurant">
   <meta property="og:site_name" content="Hocine Chapati">
   <meta property="og:title" content="Hocine Chapati — Le vrai goût du Chapati">
-  <meta property="og:description" content="Chapatis généreux, pizzas gourmandes et Bol H Chapati préparés avec passion. Le goût qui rassemble.">
+  <meta property="og:description" content="Chapatis généreux, pizzas gourmandes, poutine, pita &amp; gyros et desserts préparés avec passion. Le goût qui rassemble.">
   <meta property="og:image" content="https://www.hocinechapati.com/assets/img/og-image.jpg">
   <meta property="og:locale" content="fr_DZ">
   <meta name="twitter:card" content="summary_large_image">
@@ -25,7 +25,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Anton&family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="preload" as="image" href="assets/img/logo.webp" fetchpriority="high">
   <link rel="preload" as="image" href="assets/img/pizza-ronde.webp">
-  <link rel="stylesheet" href="assets/css/styles.css?v=100">
+  <link rel="stylesheet" href="assets/css/styles.css?v=105">
   <script>document.documentElement.classList.add("js");if(!location.hash)document.documentElement.classList.add("has-intro")</script>
 
   <!-- Données structurées (Google) : ville tirée de la fiche Google Maps ; rue à ajouter quand le client la donne -->
@@ -50,8 +50,8 @@
       "opens": "11:00",
       "closes": "21:00"
     }],
-    "servesCuisine": ["Chapati", "Pizza", "Bol H Chapati"],
-    "priceRange": "30 DA - 2300 DA",
+    "servesCuisine": ["Chapati", "Pizza", "Poutine", "Pasta", "Pita", "Gyros", "Crêpes", "Kunafa"],
+    "priceRange": "30 DA - 4000 DA",
     "currenciesAccepted": "DZD",
     "hasMenu": "https://www.hocinechapati.com/#menu",
     "acceptsReservations": false,
@@ -87,7 +87,7 @@
         <a href="menu.html">Menu</a>
         <a href="#chapati">Chapati</a>
         <a href="#pizzas">Pizzas</a>
-        <a href="#bols">Bol H Chapati</a>
+        <a href="#bols">Poutine &amp; Pasta</a>
         <a href="#contact">Contact</a>
       </nav>
       <a class="btn nav__cta" href="tel:+213556725681" data-order><svg class="nav__cta-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10"/><path d="M17 21V3c-2 1.5-3 4-3 7v3h3"/></svg>Commander<svg class="nav__cta-arr" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a>
@@ -104,7 +104,7 @@
       <a href="menu.html"><small>02</small>Menu</a>
       <a href="#chapati"><small>03</small>Chapati</a>
       <a href="#pizzas"><small>04</small>Pizzas</a>
-      <a href="#bols"><small>05</small>Bol H Chapati</a>
+      <a href="#bols"><small>05</small>Poutine &amp; Pasta</a>
       <a href="#contact"><small>06</small>Contact</a>
     </nav>
     <div class="drawer__foot">
@@ -139,8 +139,8 @@
         <div class="hx__stage">
           <div class="hx__arc" id="hxArc" role="group" aria-label="Nos 3 plats vedettes">
             <button type="button" class="hx__d" data-key="chapati" aria-label="Voir le Chapati S-2 Mixte"><img src="assets/img/chapati-frites.webp" alt="Chapati grillé et frites" width="800" height="800"></button>
-            <button type="button" class="hx__d" data-key="pizza" aria-label="Voir la Pizza Maison"><img src="assets/img/pizza-ronde.webp" alt="Pizza aux poivrons et champignons" width="800" height="800" fetchpriority="high"></button>
-            <button type="button" class="hx__d" data-key="bol" aria-label="Voir le Bol Poutine Mixte"><img src="assets/img/bol-rond.webp" alt="Bol H Chapati : frites, poulet et fromage fondu" width="800" height="800"></button>
+            <button type="button" class="hx__d" data-key="pizza" aria-label="Voir la Pizza Spécial"><img src="assets/img/pizza-ronde.webp" alt="Pizza aux poivrons et champignons" width="800" height="800" fetchpriority="high"></button>
+            <button type="button" class="hx__d" data-key="bol" aria-label="Voir la Poutine Mixte"><img src="assets/img/bol-rond.webp" alt="Poutine : frites, poulet et fromage fondu" width="800" height="800"></button>
           </div>
           <div class="hx__cap">
             <p class="hx__capt"><b id="hxName"></b><span id="hxFrom"></span></p>
@@ -190,7 +190,7 @@
                 <div class="phome__widget">
                   <span class="phome__widget-k">Hocine Chapati</span>
                   <b class="phome__widget-s" id="phomeStatus">Commande en ligne</b>
-                  <span class="phome__widget-t">Chapatis · Pizzas · Bol H Chapati</span>
+                  <span class="phome__widget-t">Chapatis · Pizzas · Desserts</span>
                 </div>
                 <div class="phome__app">
                   <p class="phome__tip">Envie d'un chapati&nbsp;?<br><strong>Touchez le logo pour commander</strong></p>
@@ -210,7 +210,7 @@
         <div class="spec__content">
           <p class="eyebrow reveal"><span class="dot"></span>Notre spécialité</p>
           <h2 class="h2 reveal" id="spec-title">Le Chapati<br><em class="serif">qui fait revenir.</em></h2>
-          <p class="lead reveal">Une galette dorée, une garniture généreuse, pliée et servie chaude. Deux familles pour deux envies : l'<strong>Original</strong>, la recette qui a lancé la maison, et la <strong>Saison 2</strong>, plus copieuse, au poulet, à la viande ou en mixte.</p>
+          <p class="lead reveal">Une galette dorée, une garniture généreuse, pliée et servie chaude. Deux familles pour deux envies : l'<strong>Original</strong>, la recette qui a lancé la maison, et la <strong>Saison 2</strong>, plus copieuse, au poulet, à la viande, aux champignons ou en mixte.</p>
 
           <div class="s2 reveal">
             <div class="s2__head">
@@ -232,9 +232,9 @@
           <div class="pz reveal">
             <div class="s2__head">
               <h3 class="h3">Menu <span class="badge">Pizzas</span></h3>
-              <span class="caption">Mini · Normal · Mega</span>
+              <span class="caption">Standard · Mega</span>
             </div>
-            <div class="pz__row pz__row--head"><span>Pizza</span><span>Mini</span><span>Normal</span><span>Mega</span></div>
+            <div class="pz__row pz__row--head"><span>Pizza</span><span>Standard</span><span>Mega</span></div>
             <div id="pzRows"><!-- rendu par main.js --></div>
             <p class="supp" id="pzSupp"></p>
           </div>
@@ -252,7 +252,7 @@
             <p class="eyebrow eyebrow--dark reveal"><span class="dot"></span>Deuxième passion</p>
             <h2 class="h2 reveal" id="pizza-title">Nos <em class="serif">Pizzas</em></h2>
           </div>
-          <p class="sec-head__txt reveal">Une pâte cuite au four, du fromage qui file, et trois formats pour chaque appétit : <b>Mini</b>, <b>Normal</b> et <b>Mega</b> à partager.</p>
+          <p class="sec-head__txt reveal">Une pâte cuite au four, du fromage qui file, du cheddar et de la mozzarella, en deux formats : <b>Standard</b> et <b>Mega</b> à partager. Et nouveau : la <b>Pizza Pocket</b>, préparée à la minute.</p>
         </div>
       </div>
       <!-- Défilement horizontal automatique (continu, de droite à gauche) -->
@@ -274,26 +274,26 @@
       </div>
     </section>
 
-    <!-- =========================== BOL H CHAPATI =========================== -->
+    <!-- =========================== POUTINE & PASTA =========================== -->
     <section class="pizzas section section--cream bols" id="bols" data-nav="light" aria-labelledby="bols-title">
       <div class="container">
         <div class="sec-head">
           <div>
-            <p class="eyebrow eyebrow--dark reveal"><span class="dot"></span>Tout dans un bol</p>
-            <h2 class="h2 reveal" id="bols-title">Bol <em class="serif">H Chapati</em></h2>
+            <p class="eyebrow eyebrow--dark reveal"><span class="dot"></span>Généreux &amp; fondants</p>
+            <h2 class="h2 reveal" id="bols-title">Poutine <em class="serif">&amp; Pasta</em></h2>
           </div>
-          <p class="sec-head__txt reveal">Une base <b>Pasta</b> ou <b>Poutine</b>, une garniture <b>Poulet</b>, <b>Viande</b> ou <b>Mixte</b>, en taille <b>M</b>, <b>L</b> ou <b>XL</b>.</p>
+          <p class="sec-head__txt reveal">Des frites croustillantes (<b>Poutine</b>) ou des pâtes fondantes (<b>Pasta</b>), avec <b>Poulet</b>, <b>Viande</b> ou <b>Mixte</b>, nappées de sauce fromage mozzarella-cheddar.</p>
         </div>
       </div>
-      <div class="hs" id="bolHS" aria-label="Nos Bol H Chapati">
+      <div class="hs" id="bolHS" aria-label="Nos poutines et pastas">
         <div class="hs__sticky">
           <div class="hs__track" id="bolGrid"><!-- rendu par main.js --></div>
         </div>
       </div>
-      <!-- Même bande rouge que les pizzas : le Bol H tourne dans le globe à gauche, tableau à droite -->
+      <!-- Même bande rouge que les pizzas : le bol tourne dans le globe à gauche, tableau à droite -->
       <div class="vband" data-nav="dark">
         <div class="container vband__inner">
-          <figure class="vband__media globe" role="img" aria-label="Bol H Chapati en forme de globe qui tourne">
+          <figure class="vband__media globe" role="img" aria-label="Poutine Hocine Chapati en forme de globe qui tourne">
             <img class="globe__pizza" src="assets/img/globe-bol.webp" alt="" width="380" height="380" loading="lazy" decoding="async">
             <img class="globe__pied" src="assets/img/globe-pied.webp" alt="" width="600" height="818" loading="lazy" decoding="async">
           </figure>
@@ -413,7 +413,7 @@
         <div><b>Hocine Chapati</b><span>Le goût qui rassemble</span></div>
       </div>
       <nav class="foot__links" aria-label="Pied de page">
-        <a href="menu.html">Menu</a><a href="#chapati">Chapati</a><a href="#pizzas">Pizzas</a><a href="#bols">Bol H Chapati</a><a href="#contact">Contact</a>
+        <a href="menu.html">Menu</a><a href="#chapati">Chapati</a><a href="#pizzas">Pizzas</a><a href="#bols">Poutine &amp; Pasta</a><a href="#contact">Contact</a>
       </nav>
       <p class="foot__copy">© <span id="year">2026</span> Hocine Chapati. Prix en dinars algériens (DA).</p>
     </div>
@@ -425,8 +425,9 @@
     <span>Menu</span>
   </a>
 
-  <script src="assets/js/menu-data.js?v=100" defer></script>
-  <script src="assets/js/main.js?v=100" defer></script>
-  <script src="assets/js/order.js?v=100" defer></script>
+  <script src="assets/js/menu-data.js?v=103" defer></script>
+  <script src="assets/js/catalog.js?v=103" defer></script>
+  <script src="assets/js/main.js?v=104" defer></script>
+  <script src="assets/js/order.js?v=103" defer></script>
 </body>
 </html>
