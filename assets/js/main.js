@@ -358,6 +358,38 @@
     addEventListener("storage", (e) => { if (e.key === K.STORE) refreshFab(); });
     addEventListener("pageshow", refreshFab);
 
+    /* clic sur « À emporter » : une boîte de pizza sort du sac en sautant puis s'envole vers le haut ;
+       elle « atterrit » ensuite dans l'iPhone de l'accueil (order.js), où le panier s'ouvre */
+    fab.addEventListener("click", (e) => {
+      if (reduce || !document.body.animate || e.ctrlKey || e.metaKey || e.shiftKey || e.button) return;
+      e.preventDefault();
+      if (fab.classList.contains("is-leaving")) return;
+      fab.classList.add("is-leaving");
+      fab.classList.remove("is-bump"); void fab.offsetWidth; fab.classList.add("is-bump");
+      const r = $(".mcart__bag", fab).getBoundingClientRect();
+      const W = 120, H = 106;
+      const box = document.createElement("div");
+      box.className = "pbox";
+      box.innerHTML = K.BOX;
+      document.body.append(box);
+      // la boîte jaillit du sac et s'arrête juste au-dessus ; l'accueil la reprend exactement à cet endroit
+      const sx = Math.min(Math.max(8, r.left + r.width / 2 - W / 2), innerWidth - W - 8), sy = r.top + r.height / 2 - H / 2;
+      const ty = Math.max(8, sy - 110);
+      const pop = box.animate([
+        { transform: `translate(${sx}px, ${sy + 12}px) scale(.15) rotate(0deg)`, opacity: 0 },
+        { transform: `translate(${sx}px, ${ty - 14}px) scale(1.08) rotate(-8deg)`, opacity: 1, offset: 0.55 },
+        { transform: `translate(${sx}px, ${ty + 6}px) scale(.97) rotate(5deg)`, opacity: 1, offset: 0.78 },
+        { transform: `translate(${sx}px, ${ty}px) scale(1) rotate(-3deg)`, opacity: 1 }
+      ], { duration: 700, easing: "cubic-bezier(.3,1.3,.5,1)", fill: "forwards" });
+      try { sessionStorage.setItem(K.BOX_KEY, JSON.stringify({ x: sx / innerWidth, y: ty / innerHeight })); } catch { /* ignoré */ }
+      let gone = false;
+      const go = () => { if (gone) return; gone = true; location.href = fab.href; };
+      pop.finished.then(() => setTimeout(go, 120), go);
+      setTimeout(go, 1100);
+    });
+    // retour arrière vers la page Menu : le sac redevient cliquable
+    addEventListener("pageshow", () => { fab.classList.remove("is-leaving"); $$(".pbox").forEach((b) => b.remove()); });
+
     const EMOJI = { orig: "🌮", s2: "🌮", pizza: "🍕", pocket: "🍕", bol: "🍝", pita: "🥙", form: "🥙", salade: "🥗", crepe: "🥞", pancake: "🥞", kunafa: "🍯", dessert: "🍰", drink: "🥤" };
     const bump = () => {
       fab.classList.remove("is-bump"); void fab.offsetWidth; fab.classList.add("is-bump");

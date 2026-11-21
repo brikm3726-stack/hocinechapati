@@ -279,11 +279,68 @@
   };
 
   if (location.hash === "#panier") {
-    const go = () => {
-      document.getElementById("chapati")?.scrollIntoView({ behavior: "auto", block: "start" });
-      setTimeout(() => renderCart(), 700);
+    /* la boîte de pizza (logo Hocine Chapati) sortie du sac de la page Menu (main.js) repart du même endroit
+       de l'écran, file droit sur l'iPhone, s'écrase dessus comme un autocollant et reste collée sur son côté */
+    let from = null;
+    try { from = JSON.parse(sessionStorage.getItem(K.BOX_KEY)); sessionStorage.removeItem(K.BOX_KEY); } catch { from = null; }
+    const withBox = !!from;
+    const boxIn = () => {
+      const scr = document.getElementById("mphoneScreen") || app;
+      const phone = scr.closest(".mphone") || scr;
+      // téléphone : l'iPhone est dans le fil de la page, on le centre à l'écran
+      // (ordinateur : il est déjà à sa place après le saut vers #chapati)
+      if (matchMedia("(max-width: 960px)").matches) phone.scrollIntoView({ block: "center", behavior: "instant" });
+      const pr = phone.getBoundingClientRect();
+      const W = 120, H = 106, ROT = -12;
+      const s = Math.min(1, (pr.width * 0.4) / W);            // taille de la boîte collée, selon la taille de l'iPhone
+      // coin bas gauche de l'iPhone, à moitié dehors, sans jamais sortir de l'écran
+      const vis = Math.max(-W * s * 0.55, 18 - pr.left);        // bord gauche visible de la boîte, relatif à l'iPhone
+      const lx = vis - (W - W * s) / 2, ly = pr.height * 0.87 - H / 2;   // coin bas gauche : ne cache pas les boutons du panier
+      const sx = typeof from.x === "number" ? from.x * innerWidth : 16;
+      const sy = typeof from.y === "number" ? from.y * innerHeight : innerHeight - H - 90;
+      const tx = pr.left + lx, ty = pr.top + ly;
+      const box = document.createElement("div");
+      box.className = "pbox";
+      box.innerHTML = K.BOX;
+      document.body.append(box);
+      const mx = (sx + tx) / 2, my = Math.min(sy, ty) - 80;
+      const flight = box.animate([
+        { transform: `translate(${sx}px, ${sy}px) scale(1) rotate(-3deg)` },
+        { transform: `translate(${mx}px, ${my}px) scale(${(1 + s) / 2 + 0.08}) rotate(${ROT - 14}deg)`, offset: 0.55 },
+        { transform: `translate(${tx}px, ${ty}px) scale(${s}) rotate(${ROT}deg)` }
+      ], { duration: 900, easing: "cubic-bezier(.45,0,.25,1)", fill: "forwards" });
+      let done = false;
+      const land = () => {
+        if (done) return; done = true;
+        // la boîte devient un autocollant posé sur l'iPhone (elle suit l'iPhone et ne bloque aucun clic)
+        flight.cancel();
+        box.classList.add("pbox--stuck");
+        box.style.left = `${lx}px`;
+        box.style.top = `${ly}px`;
+        box.style.transform = `rotate(${ROT}deg) scale(${s})`;
+        phone.append(box);
+        box.animate?.([
+          { transform: `rotate(${ROT}deg) scale(${s * 1.2}, ${s * 0.78})` },
+          { transform: `rotate(${ROT}deg) scale(${s * 0.94}, ${s * 1.07})` },
+          { transform: `rotate(${ROT}deg) scale(${s})` }
+        ], { duration: 420, easing: "ease-out" });
+        scr.animate?.([{ filter: "brightness(1)" }, { filter: "brightness(1.3)" }, { filter: "brightness(1)" }], { duration: 450 });
+        setTimeout(() => renderCart(), 250);
+      };
+      flight.finished.then(land, land);
+      setTimeout(land, 1200);
     };
-    if (document.readyState === "complete") go(); else addEventListener("load", go, { once: true });
+    let started = false;
+    const go = () => {
+      if (started) return;
+      started = true;
+      document.getElementById("chapati")?.scrollIntoView({ behavior: "instant", block: "start" });   // instantané (le site défile en douceur par défaut)
+      if (withBox && !reduce && document.body.animate) setTimeout(boxIn, 450);
+      else setTimeout(() => renderCart(), 700);
+    };
+    // on n'attend pas toutes les images (réseau lent) : au plus tard 1,2 s après l'ouverture de la page
+    if (document.readyState === "complete") go();
+    else { addEventListener("load", go, { once: true }); setTimeout(go, 1200); }
   }
 
   /* ---------- écran d'accueil : l'icône (logo) ouvre l'application ---------- */

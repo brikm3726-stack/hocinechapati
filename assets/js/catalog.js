@@ -64,5 +64,22 @@
   };
   const totals = (cart) => cart.reduce((t, l) => { const i = info(l); return { n: t.n + l.qty, sum: t.sum + i.total }; }, { n: 0, sum: 0 });
 
-  window.HCCatalog = { CATS, ITEMS, STORE, of: (src) => BY_SRC.get(src), info, load, save, addLine, totals };
+  /* boîte de pizza « à emporter » : sort du sac de la page Menu et rentre dans l'iPhone de l'accueil */
+  // boîte vue de trois quarts : grand couvercle avec le logo Hocine Chapati (étiquette ronde), bande rouge devant
+  const BOX = `<svg viewBox="0 0 140 124" aria-hidden="true">
+    <defs><clipPath id="hcBoxLogo"><circle r="27"/></clipPath></defs>
+    <path d="M54 6c-3 5 3 7 0 12M70 2c-3 6 3 8 0 14M86 6c-3 5 3 7 0 12" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".8"/>
+    <path d="M26 22h88l20 62H6z" fill="#E7B271" stroke="#8E5E2C" stroke-width="2.5" stroke-linejoin="round"/>
+    <path d="M30 27h80l16 52H14z" fill="none" stroke="#C98A47" stroke-width="1.5" stroke-dasharray="4 3"/>
+    <g transform="translate(70 53) scale(1 .78)">
+      <circle r="30" fill="#fff" stroke="#D7191F" stroke-width="3"/>
+      <image href="assets/img/logo.webp" x="-27" y="-27" width="54" height="54" clip-path="url(#hcBoxLogo)"/>
+    </g>
+    <rect x="6" y="84" width="128" height="30" rx="3" fill="#C98A47" stroke="#8E5E2C" stroke-width="2.5"/>
+    <rect x="6" y="91" width="128" height="14" fill="#D7191F"/>
+    <text x="70" y="101.5" text-anchor="middle" font-family="Arial, sans-serif" font-size="9.5" font-weight="900" fill="#fff" letter-spacing="1">HOCINE CHAPATI</text>
+  </svg>`;
+  const BOX_KEY = "hc-boite";   // la boîte part de la page Menu et arrive dans l'iPhone de l'accueil
+
+  window.HCCatalog = { CATS, ITEMS, STORE, of: (src) => BY_SRC.get(src), info, load, save, addLine, totals, BOX, BOX_KEY };
 })();
