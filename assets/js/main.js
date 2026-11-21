@@ -258,7 +258,7 @@
           if (!it || (size && !z)) return "";
           const cls = `carte__hot${h < 50 ? " carte__hot--row" : ""}${z ? " carte__hot--price" : ""}`;
           const label = z ? `${it.name} ${z.label}, ${z.price} DA` : `${it.name}, ${priceOf(it)}`;
-          return `<button type="button" class="${cls}" data-add="${it.id}"${z ? ` data-size="${esc(z.label)}"` : ""} style="left:${pct(x, W)};top:${pct(y, H)};width:${pct(w, W)};height:${pct(h, H)}" aria-label="Ajouter au panier : ${esc(label)}"><span class="carte__plus" aria-hidden="true">+</span></button>`;
+          return `<button type="button" class="${cls}" data-add="${it.id}"${z ? ` data-size="${esc(z.label)}"` : ""} style="left:${pct(x, W)};top:${pct(y, H)};width:${pct(w, W)};height:${pct(h, H)}" aria-label="Ajouter au panier : ${esc(label)}"></button>`;
         }).join("")}
       </div>
     </figure>`;
@@ -455,10 +455,15 @@
   const dio = new IntersectionObserver((ents) => ents.forEach((e) => {
     if (e.isIntersecting) { e.target.classList.add("is-in"); dio.unobserve(e.target); }
   }), { rootMargin: "0px 0px -8% 0px", threshold: 0.12 });
+  // affiches : quand une affiche apparaît, ses plats cliquables s'allument brièvement (sans rien cacher)
+  const hio = new IntersectionObserver((ents) => ents.forEach((e) => {
+    if (e.isIntersecting) { e.target.classList.add("is-hint"); hio.unobserve(e.target); }
+  }), { threshold: 0.3 });
   const paint = (cat) => {
     panel.innerHTML = RENDER[cat]();
     panel.dataset.cat = cat;
     $$(".dish, .gcard", panel).forEach((el) => (reduce ? el.classList.add("is-in") : dio.observe(el)));
+    if (!reduce) $$(".carte", panel).forEach((el) => hio.observe(el));
   };
   let current = "chapati";
   const show = (cat, animate = true) => {
