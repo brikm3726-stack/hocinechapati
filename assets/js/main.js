@@ -632,7 +632,7 @@
 
   /* ---------------- Intro du hero ---------------- */
   const start = () => requestAnimationFrame(() => document.body.classList.add("is-loaded"));
-  const heroImg = $(".hx__dish");
+  const heroImg = $(".hv__img.is-on") || $(".hx__dish");
   const boot = () => {
     if (!heroImg || heroImg.complete) start();
     else { heroImg.addEventListener("load", start, { once: true }); setTimeout(start, 1200); }
@@ -730,88 +730,127 @@
     });
   }
 
-  /* ---------------- Page 1 : 3 plats en « /\ » + suppléments (vrais prix de menu-data.js) ----------------
-     Le plat du sommet est le plat choisi. Les 3 plats tournent le long du « /\ » ; un clic sur un plat l'amène au sommet.
-     L'ajout va dans le même panier que l'iPhone de commande (window.HCOrder, défini par order.js). */
-  if ($("#hxArc")) {
-    const nb = (n) => n.toLocaleString("fr-FR").replace(/\u202f/g, "\u00a0");
-    const da2 = (n) => `${nb(n)}\u00a0DA`;
-    const iPz = D.pizzas.findIndex((x) => x.name === "Pizza Spécial");
-    const iCh = D.chapatiS2.findIndex((x) => x.name === "Chapati S-2 Mixte");
-    const iBo = D.bowls.findIndex((x) => x.name === "Poutine Mixte");
-    const pz = D.pizzas[iPz], ch = D.chapatiS2[iCh], bo = D.bowls[iBo];
-    const DISH = {
-      chapati: { id: `s2-${iCh}`, name: ch.name, desc: ch.desc, from: da2(ch.price), photo: "chapati-frites", price: ch.price, supps: D.supplementsS2 },
-      pizza: { id: `pizza-${iPz}`, name: pz.name, desc: pz.desc, from: `dès ${da2(pz.prices[0])}`, photo: "pizza-ronde", sizes: D.pizzaSizes.map((l, k) => ({ label: l, price: pz.prices[k] })), supps: D.supplementsPizza },
-      bol: { id: `bol-${iBo}`, name: bo.name, desc: bo.desc, from: da2(bo.price), photo: "bol-rond", price: bo.price, supps: D.supplementsBol }
+  /* ---------------- Page 1 « comme la vidéo » ----------------
+     Titre centré, ingrédients qui arrivent en volant puis flottent (et suivent un peu la souris),
+     une seule grande pizza à moitié visible qui tourne, dont le haut arrive juste sous le texte. */
+  if ($("#hvStage")) {
+    const stage = $("#hvStage"), copy = $(".hv__copy", stage), dish = $("#hvDish");
+    // la pizza est posée tout en bas de la page 1, aussi grande que possible sans toucher le texte
+    // (ordinateur : jusqu’à la largeur de la page 1 ; téléphone : plus large que l’écran, coupée sur les côtés)
+    const desk = matchMedia("(min-width: 961px)");
+    const sizeDish = () => {
+      const st = stage.getBoundingClientRect();
+      // téléphone : pizza de la largeur de l'écran ; le texte se pose juste au-dessus (CSS --half)
+      if (!desk.matches) { dish.style.width = `${st.width}px`; stage.style.setProperty("--half", `${st.width / 2}px`); return; }
+      const below = copy.getBoundingClientRect().bottom - st.top;
+      const half = st.height - below - 18;                                   // hauteur visible (la moitié du disque)
+      const cap = st.width * (desk.matches ? 1.05 : 1);                      // téléphone : largeur de l'écran
+      dish.style.width = `${Math.max(240, Math.min(half * 2, cap))}px`;
     };
-    const KEYS = ["chapati", "pizza", "bol"];
-    const btns = Object.fromEntries($$(".hx__d").map((b) => [b.dataset.key, b]));
-    let sel = 1, busy = false;
-    KEYS.forEach((k, i) => btns[k].classList.toggle("is-on", i === sel));
+    sizeDish();
+    addEventListener("resize", sizeDish);
+    document.fonts?.ready.then(sizeDish);
+    if (window.ResizeObserver) new ResizeObserver(sizeDish).observe(stage);
 
-    /* Un seul plat visible, il ne change que si on glisse (pas de défilement automatique).
-       Les plats suivent le doigt : on glisse vers la gauche, l'ancien plat descend vers le bas à gauche
-       et disparaît, le nouveau sort du vide en bas à droite et monte se poser au milieu (« /\ » ensemble).
-       Vers la droite : le même mouvement en miroir. */
-    const C = "translate(-50%, -50%)";
-    const far = (side) => `${C} translate(${side * 78}%, 78%) scale(.5) rotate(${side * 25}deg)`;   // en bas, à gauche (-1) ou à droite (+1)
-    const mid = `${C} translate(0, 0) scale(1) rotate(0deg)`;
-    const swap = (from, to, dir) => {
-      const a = btns[KEYS[from]], b = btns[KEYS[to]];
-      a.classList.remove("is-on"); b.classList.add("is-on");
-      if (reduce || !a.animate) return;
-      const opt = { duration: 1000, easing: "cubic-bezier(.5, 0, .25, 1)" };
-      busy = true;
-      a.classList.add("is-moving");
-      a.animate([{ transform: mid, opacity: 1 }, { transform: far(-dir), opacity: 0 }], opt).finished.finally(() => a.classList.remove("is-moving"));
-      b.animate([{ transform: far(dir), opacity: 0 }, { transform: mid, opacity: 1 }], opt).finished.finally(() => { busy = false; });
-    };
-    // suppléments en icônes sous le nom du plat (le bol n'a pas de suppléments : on montre ses tailles)
-    const ICON = (n) => /frite/i.test(n) ? "🍟" : /poulet/i.test(n) ? "🍗" : /viande/i.test(n) ? "🥩" : /champignon/i.test(n) ? "🍄" : "🧀";
-    const supps = $("#hxSupps");
-    const render = () => {
-      const d = DISH[KEYS[sel]];
-      $("#hxName").textContent = d.name;
-      $("#hxFrom").textContent = d.from;
-      supps.classList.add("is-swap");
-      setTimeout(() => {
-        supps.innerHTML = d.supps.length
-          ? d.supps.map((s) => `<li><i aria-hidden="true">${ICON(s.name)}</i><span>${esc(s.name)}</span><b>+${da2(s.price)}</b></li>`).join("")
-          : d.sizes.map((s) => `<li><i aria-hidden="true">🥣</i><span>Taille ${esc(s.label)}</span><b>${da2(s.price)}</b></li>`).join("");
-        supps.setAttribute("aria-label", d.supps.length ? `Suppléments : ${d.name}` : `Tailles : ${d.name}`);
-        supps.classList.remove("is-swap");
-      }, supps.innerHTML ? 220 : 0);
-    };
+    /* logo : un crayon dessine le portrait au trait en 7 s, puis s'envole et le logo se colore.
+       Le crayon suit le même tracé que le trait (chemin de mouvement CSS, même durée et même vitesse) ;
+       ici on le crée et on garde l'échelle du tracé (640 unités) à la taille réelle du logo. */
+    const logo = $(".hv__logo", stage);
+    if (logo) {
+      const d = $(".hv__logo-line path", logo)?.getAttribute("d");
+      const track = document.createElement("span");
+      track.className = "hv__pencil-track";
+      track.setAttribute("aria-hidden", "true");
+      track.innerHTML = `<span class="hv__pencil"><svg viewBox="0 0 48 48"><g transform="translate(2 46) rotate(-45)">
+        <path d="M0 0L7-2.6V2.6Z" fill="#3A2E28"/><path d="M7-2.6L15-5.5V5.5L7 2.6Z" fill="#F3CC93"/>
+        <rect x="15" y="-5.5" width="31" height="11" fill="#F6B21A"/><rect x="15" y="-1.8" width="31" height="3.6" fill="#E89B0C"/>
+        <rect x="46" y="-5.8" width="4.5" height="11.6" fill="#C9CED6"/><rect x="50.5" y="-5.5" width="6" height="11" rx="2.6" fill="#F08DA1"/>
+      </g></svg></span>`;
+      if (d) track.firstElementChild.style.offsetPath = `path("${d}")`;
+      logo.append(track);
+      const scale = () => track.style.setProperty("--k", (logo.clientWidth / 640).toFixed(4));
+      scale();
+      addEventListener("resize", scale);
 
-    const go = (k, dir = 1) => {
-      if (busy) return;
-      const next = (k + 3) % 3;
-      if (next === sel) return;
-      swap(sel, next, dir); sel = next; render();
-    };
-    // swipe (doigt ou souris) : vers la gauche = plat suivant (il arrive de la droite)
-    const arc = $("#hxArc");
-    let x0 = null;
-    arc.addEventListener("pointerdown", (e) => { x0 = e.clientX; });
-    arc.addEventListener("pointerup", (e) => {
-      if (x0 === null) return;
-      const dx = e.clientX - x0; x0 = null;
-      if (Math.abs(dx) > 40) dx < 0 ? go(sel + 1, 1) : go(sel - 1, -1);
-    });
-    arc.addEventListener("pointercancel", () => { x0 = null; });
-    addEventListener("keydown", (e) => {
-      if (!["ArrowLeft", "ArrowRight"].includes(e.key) || !$(".hx").matches(":hover, :focus-within")) return;
-      e.key === "ArrowRight" ? go(sel + 1, 1) : go(sel - 1, -1);
-    });
-    render();
+      /* Suite : quand le portrait est fini (7,2 s), le même crayon file vers « Le goût qui rassemble »,
+         l'écrit de gauche à droite (le texte apparaît sous sa pointe), trace le trait rouge dessous, puis s'envole. */
+      const hello = $(".hv__hello", copy), swash = $(".hv__swash path", copy), lineEl = $(".hv__logo-line path", logo);
+      if (!reduce && hello && swash && lineEl && document.body.animate && CSS.supports?.("offset-path", 'path("M0 0")')) {
+        copy.classList.add("has-writer");
+        const writer = document.createElement("span");
+        writer.className = "hv__pencil hv__writer";
+        writer.setAttribute("aria-hidden", "true");
+        writer.innerHTML = track.firstElementChild.innerHTML;
+        copy.append(writer);
+        const write = () => {
+          const c = copy.getBoundingClientRect(), W = writer.offsetWidth, H = writer.offsetHeight;
+          const at = (x, y) => `translate(${(x - c.left - W * 0.04).toFixed(1)}px, ${(y - c.top - H * 0.96).toFixed(1)}px)`;
+          // départ : la fin du tracé du portrait
+          const lr = logo.getBoundingClientRect(), k = lr.width / 640, end = lineEl.getPointAtLength(lineEl.getTotalLength());
+          const sx = lr.left + end.x * k, sy = lr.top + end.y * k;
+          // la ligne de texte (zone réellement occupée par les lettres)
+          const range = document.createRange(); range.selectNodeContents(hello);
+          const tr = range.getBoundingClientRect(), hr = hello.getBoundingClientRect();
+          const ty = tr.top + tr.height * 0.72;
+          // le trait rouge : points pris sur son tracé
+          const sw = swash.ownerSVGElement.getBoundingClientRect(), s = sw.width / 200, sl = swash.getTotalLength();
+          const swPts = Array.from({ length: 13 }, (_, i) => { const p = swash.getPointAtLength((sl * i) / 12); return [sw.left + p.x * s, sw.top + p.y * s]; });
+          // chronologie (ms) : aller au texte 600, écrire 2000, aller au trait 300, tracer 1000, s'envoler 700
+          const T = 4600, kf = [], push = (t, x, y, o = 1) => kf.push({ offset: t / T, transform: at(x, y), opacity: o });
+          push(0, sx, sy); push(600, tr.left, ty);
+          for (let i = 1; i <= 20; i++) push(600 + 100 * i, tr.left + (tr.width * i) / 20, ty + Math.sin(i * 1.7) * tr.height * 0.18);
+          swPts.forEach(([x, y], i) => push(2900 + (1000 * i) / 12, x, y));
+          kf.push({ offset: 1, transform: at(swPts[12][0] + 90, swPts[12][1] - 120), opacity: 0 });
+          writer.animate(kf, { duration: T, fill: "forwards" });
+          // le texte apparaît sous la pointe, puis le trait rouge se dessine en même temps que le crayon
+          const r0 = hr.right - tr.left, r1 = hr.right - tr.right - 14;
+          hello.animate([{ clipPath: `inset(-40% ${r0}px -40% 0)` }, { clipPath: `inset(-40% ${r1}px -40% 0)` }], { delay: 600, duration: 2000, fill: "both" });
+          swash.animate([{ strokeDashoffset: 210 }, { strokeDashoffset: 0 }], { delay: 2900, duration: 1000, fill: "both" });
+        };
+        const startWriter = () => setTimeout(write, 7200);
+        if (document.body.classList.contains("is-loaded")) startWriter();
+        else new MutationObserver((m, o) => { if (document.body.classList.contains("is-loaded")) { o.disconnect(); startWriter(); } })
+          .observe(document.body, { attributes: true, attributeFilter: ["class"] });
+      }
+    }
+
+    const setP = (x, y) => { stage.style.setProperty("--px", x.toFixed(3)); stage.style.setProperty("--py", y.toFixed(3)); };
+    // ordinateur : les ingrédients suivent légèrement la souris
+    if (!reduce && matchMedia("(hover: hover)").matches) {
+      let raf = 0, px = 0, py = 0;
+      stage.addEventListener("pointermove", (e) => {
+        const r = stage.getBoundingClientRect();
+        px = (e.clientX - r.left) / r.width - 0.5; py = (e.clientY - r.top) / r.height - 0.5;
+        if (!raf) raf = requestAnimationFrame(() => { raf = 0; setP(px, py); });
+      });
+      stage.addEventListener("pointerleave", () => setP(0, 0));
+    }
+    // téléphone : les ingrédients dérivent doucement en permanence et suivent le doigt quand on touche l'écran
+    else if (!reduce) {
+      let raf = 0, px = 0, py = 0, tx = 0, ty = 0, touching = false, visible = true;
+      const t0 = performance.now();
+      const follow = (t) => { const r = stage.getBoundingClientRect(); tx = (t.clientX - r.left) / r.width - 0.5; ty = (t.clientY - r.top) / r.height - 0.5; };
+      const loop = () => {
+        if (!visible || document.hidden) { raf = 0; return; }
+        raf = requestAnimationFrame(loop);
+        const s = (performance.now() - t0) / 1000;
+        const ax = touching ? tx : Math.sin(s * 0.55) * 0.45, ay = touching ? ty : Math.cos(s * 0.42) * 0.35;
+        px += (ax - px) * 0.05; py += (ay - py) * 0.05;
+        setP(px, py);
+      };
+      stage.addEventListener("touchstart", (e) => { touching = true; follow(e.touches[0]); }, { passive: true });
+      stage.addEventListener("touchmove", (e) => follow(e.touches[0]), { passive: true });
+      stage.addEventListener("touchend", () => { touching = false; }, { passive: true });
+      new IntersectionObserver(([en]) => { visible = en.isIntersecting; if (visible && !raf) loop(); }).observe(stage);
+      document.addEventListener("visibilitychange", () => { if (!document.hidden && visible && !raf) loop(); });
+    }
   }
 
   /* ---------------- iPhone de commande : posé à droite de la page 1, il rejoint sa place
      en page 2 pendant le défilement et s'allume en arrivant (on touche le logo pour commander) ---------------- */
   const ph = $(".spec__phone"), phOff = $("#mphoneOff");
   if (ph && phOff) {
-    const lowEls = $$(".hx__cap, .hx__supps, .hx__hint");
+    const lowEls = $$(".hv__cap, .hv__arrow");
     const scr = $("#mphoneScreen"), dock = $("#hxDock"), frame = $(".hx__frame"), page2 = $(".spec__content");
     const desk = matchMedia("(min-width: 961px)");
     let m = null, lit = true, raf = 0;

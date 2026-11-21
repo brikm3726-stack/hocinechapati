@@ -2458,3 +2458,252 @@ body::after {
 .pbox { height: 106px; }
 /* la boîte collée sur le côté de l'iPhone (accueil) */
 .pbox.pbox--stuck { position: absolute; z-index: 50; transform-origin: 50% 50%; filter: drop-shadow(0 8px 12px rgba(0,0,0,.45)); }
+
+/* ==========================================================================
+   PAGE 1 v7 — comme la vidéo « VIDEO HOCINE PAGE 1 » : titre centré, ingrédients qui flottent,
+   grand plat à moitié visible en bas qui tourne ; l'iPhone reste à droite (ordinateur)
+   ========================================================================== */
+.hv { background: #fff; color: #1A1210; }
+.hv .hx__frame { display: grid; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 961px) {
+  .hv .hx__frame { grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: 1fr; column-gap: clamp(16px, 2vw, 40px); align-items: stretch; }
+  .hv .hx__dock { align-self: start; }
+}
+.hv__defs { position: absolute; width: 0; height: 0; overflow: hidden; }
+.hv__stage {
+  --px: 0; --py: 0; position: relative; overflow: hidden; min-height: 560px; height: 100%; border-radius: 28px;
+  background: radial-gradient(120% 85% at 50% 0%, #FFFFFF 0%, #FBF6F0 58%, #F4EBDF 100%);
+  box-shadow: inset 0 0 0 1px rgba(26,18,16,.06), 0 30px 60px -40px rgba(26,18,16,.35);
+}
+/* texte centré */
+.hv__copy { position: relative; z-index: 3; width: min(92%, 660px); margin: 0 auto; padding-top: clamp(26px, 6vh, 72px); text-align: center; }
+.hv__hello { font-family: var(--f-serif); font-style: italic; font-size: clamp(1.15rem, 1.6vw, 1.6rem); color: #D9281C; margin-bottom: 6px; }
+.hv__title { font-family: var(--f-body); font-weight: 800; font-size: clamp(2.1rem, 4.1vw, 4.2rem); line-height: 1.04; letter-spacing: -.02em; color: #1A1210; }
+.hv__desc { max-width: 46ch; margin: 14px auto 22px; font-size: clamp(.95rem, 1.05vw, 1.1rem); line-height: 1.55; color: #5A4E46; }
+.hv__ctas { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
+.hv__btn { display: inline-flex; align-items: center; height: 50px; padding: 0 28px; border-radius: 999px; background: #D9281C; color: #fff; font-weight: 800; font-size: .95rem;
+  box-shadow: 0 14px 28px -12px rgba(217,40,28,.7); transition: transform .3s var(--ease), background-color .3s, color .3s; }
+.hv__btn:hover { transform: translateY(-2px); background: #B81F15; }
+.hv__btn--ghost { background: #fff; color: #1A1210; box-shadow: inset 0 0 0 1.5px rgba(26,18,16,.18), 0 10px 22px -14px rgba(26,18,16,.4); }
+.hv__btn--ghost:hover { background: #1A1210; color: #fff; }
+.hv__social { justify-content: center; margin-top: 16px; }
+.hv__social a { width: 34px; height: 34px; color: #1A1210; border-color: rgba(26,18,16,.2); }
+.hv__social a:hover { color: #fff; background: #D9281C; border-color: #D9281C; }
+/* grand plat : son centre est posé sur le bas de la page 1, on n'en voit que la moitié haute */
+.hv__dish { position: absolute; z-index: 2; left: 50%; bottom: 0; width: min(44%, 58vh, 640px); aspect-ratio: 1; transform: translate(-50%, 50%); touch-action: pan-y; cursor: grab; user-select: none; }
+.hv__dish:active { cursor: grabbing; }
+.hv__plate { position: relative; width: 100%; height: 100%; animation: spin 60s linear infinite; }
+.hv__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; opacity: 0; visibility: hidden; pointer-events: none; -webkit-user-drag: none;
+  filter: drop-shadow(0 -12px 34px rgba(26,18,16,.2)); }
+.hv__img.is-on, .hv__img.is-out { opacity: 1; visibility: visible; }
+.hv__cap { position: absolute; left: 50%; top: -12px; transform: translate(-50%, -100%); display: flex; align-items: baseline; gap: 8px; white-space: nowrap;
+  padding: 8px 16px; border-radius: 999px; background: #fff; box-shadow: 0 10px 24px -12px rgba(26,18,16,.45); font-size: .92rem; transition: opacity .25s ease, transform .3s var(--ease); }
+.hv__cap b { font-weight: 800; color: #1A1210; }
+.hv__cap span { font-weight: 800; color: #D9281C; }
+.hv__cap.is-swap { opacity: 0; transform: translate(-50%, -70%); }
+/* flèches ‹ › dans les coins du bas */
+.hv__arrow { position: absolute; z-index: 4; bottom: 22px; width: 50px; height: 50px; border-radius: 50%; display: grid; place-items: center; background: #fff; color: #1A1210; cursor: pointer;
+  box-shadow: 0 10px 24px -10px rgba(26,18,16,.45), inset 0 0 0 1px rgba(26,18,16,.08); transition: background-color .25s, color .25s, transform .25s var(--ease); }
+.hv__arrow--prev { left: 22px; }
+.hv__arrow--next { right: 22px; }
+.hv__arrow:hover { background: #D9281C; color: #fff; transform: scale(1.07); }
+.hv__arrow svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+/* ingrédients : arrivent en volant, flottent, suivent la souris, sautillent quand le plat change */
+.hv__ings { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+.hv__ing { --size: clamp(34px, 4.6vw, 84px); --w: calc(var(--size) * var(--s));
+  position: absolute; left: var(--x); top: var(--y); width: var(--w); height: var(--w); margin: calc(var(--w) / -2) 0 0 calc(var(--w) / -2);
+  translate: calc(var(--px) * var(--dep) * -46px) calc(var(--py) * var(--dep) * -34px); transform: rotate(var(--r));
+  transition: translate .7s cubic-bezier(.2, .8, .2, 1);
+  animation: hvIn 1.25s cubic-bezier(.2, .9, .25, 1.12) both; animation-delay: calc(.2s + var(--d)); animation-play-state: paused; }
+.is-loaded .hv__ing { animation-play-state: running; }
+@keyframes hvIn { from { opacity: 0; transform: translate(var(--fx), var(--fy)) rotate(calc(var(--r) - 220deg)) scale(.4); } to { opacity: 1; transform: rotate(var(--r)); } }
+.hv__ing i { display: block; width: 100%; height: 100%; animation: hvFloat var(--t) ease-in-out infinite; animation-delay: calc(var(--d) * -9); }
+@keyframes hvFloat { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-10%) rotate(7deg); } }
+.hv__ing svg { display: block; width: 100%; height: 100%; overflow: visible; filter: drop-shadow(0 10px 10px rgba(26,18,16,.22)); }
+.hv__stage.is-hop .hv__ing svg { animation: hvHop .75s cubic-bezier(.3, 1.5, .5, 1) both; animation-delay: calc(var(--d) * .7); }
+@keyframes hvHop { 0% { transform: none; } 35% { transform: translateY(-24%) rotate(-16deg) scale(1.14); } 70% { transform: translateY(5%) rotate(7deg) scale(.95); } 100% { transform: none; } }
+
+@media (max-width: 960px) {
+  .hv .hx__frame { display: block; }
+  .hv__stage { min-height: 0; height: auto; padding-bottom: calc(min(88vw, 430px) * .5 + 72px); border-radius: 22px; }
+  .hv__copy { width: 76%; padding-top: 34px; }
+  .hv__title { font-size: clamp(1.9rem, 8.2vw, 2.8rem); }
+  .hv__desc { margin: 12px auto 18px; }
+  .hv__btn { height: 46px; padding: 0 22px; font-size: .9rem; }
+  .hv__dish { width: min(88vw, 430px); }
+  .hv__ing { --size: clamp(30px, 9.5vw, 48px); }
+  .hv__arrow { width: 42px; height: 42px; bottom: 14px; }
+  .hv__arrow--prev { left: 12px; }
+  .hv__arrow--next { right: 12px; }
+  .hv__cap { font-size: .84rem; padding: 7px 14px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hv__ing, .hv__ing i, .hv__plate, .hv__stage.is-hop .hv__ing svg { animation: none; }
+  .hv__ing { opacity: 1; }
+}
+/* téléphone : ingrédients sur les bords, jamais sur le texte */
+@media (max-width: 960px) {
+  .hv__ing { --size: clamp(26px, 8vw, 40px); }
+  .hv__ing:nth-child(1) { --x: 7% !important; --y: 7% !important; }
+  .hv__ing:nth-child(2) { --x: 93% !important; --y: 6% !important; }
+  .hv__ing:nth-child(3) { --x: 5% !important; --y: 27% !important; }
+  .hv__ing:nth-child(4) { --x: 94% !important; --y: 25% !important; --r: 30deg !important; }
+  .hv__ing:nth-child(5) { --x: 94% !important; --y: 44% !important; }
+  .hv__ing:nth-child(6) { --x: 6% !important; --y: 46% !important; }
+  .hv__ing:nth-child(7) { --x: 7% !important; --y: 64% !important; }
+  .hv__ing:nth-child(8) { --x: 92% !important; --y: 62% !important; }
+  .hv__ing:nth-child(9), .hv__ing:nth-child(10) { display: none; }
+}
+/* page 1 sans boutons : plat plus grand sur ordinateur (remplit l'espace sous le titre) */
+@media (min-width: 961px) { .hv__dish { width: max(260px, min(68%, calc(2 * (92svh - var(--nav-h) - 360px)), 780px)); } .hv__copy { padding-top: clamp(30px, 7vh, 90px); } }
+/* une seule grande pizza : ordinateur = taille calculée par main.js (bord haut juste sous le texte) ;
+   téléphone = presque toute la largeur, son bord haut juste sous le texte */
+.hv__img { filter: drop-shadow(0 -14px 40px rgba(26,18,16,.22)); }
+@media (min-width: 961px) {
+  .hv__ing:nth-child(9) { --x: 5% !important; --y: 88% !important; }
+  .hv__ing:nth-child(10) { --x: 95% !important; --y: 88% !important; }
+}
+@media (max-width: 960px) {
+  .hv__dish { width: min(96vw, 560px); }
+  .hv__stage { padding-bottom: calc(min(96vw, 560px) * .5 + 14px); }
+}
+/* iPhone (Safari) : l'ombre d'une image qui tourne laissait voir un carré gris en biais.
+   → seule l'image tourne, découpée en cercle, sans filtre ; l'ombre est fixe, posée sous la pizza */
+.hv__plate { animation: none; }
+.hv__img { filter: none; border-radius: 50%; clip-path: circle(49.6% at 50% 50%); animation: spin 60s linear infinite; will-change: transform; }
+.hv__dish::before { content: ""; position: absolute; inset: 3%; border-radius: 50%; box-shadow: 0 -16px 48px rgba(26,18,16,.2); pointer-events: none; }
+@media (prefers-reduced-motion: reduce) { .hv__img { animation: none; } }
+/* téléphone : la page 1 occupe tout l'écran, toute blanche, la pizza posée tout en bas (comme sur ordinateur) */
+@media (max-width: 960px) {
+  .hv.hx { display: flex; flex-direction: column; min-height: 100svh; padding: var(--nav-h) 0 0; }
+  .hv .hx__frame { display: flex; flex-direction: column; flex: 1; width: 100%; }
+  .hv__stage { flex: 1; min-height: calc(100svh - var(--nav-h)); padding-bottom: 0; border-radius: 0; box-shadow: none; background: #fff; }
+  .hv__copy { padding-top: 22px; }
+  .hv__dish { width: min(96vw, 560px); }   /* remplacé par la taille calculée (main.js) */
+  /* deux ingrédients de plus dans l'espace entre le texte et la pizza */
+  .hv__ing:nth-child(9) { display: block; --x: 20% !important; --y: 54% !important; }
+  .hv__ing:nth-child(10) { display: block; --x: 80% !important; --y: 56% !important; }
+}
+/* téléphone : page 1 à la hauteur maximale de l'écran (barre du navigateur repliée comprise) → la page 2 ne dépasse plus en bas ;
+   ingrédients plus mobiles (dérive + doigt, main.js) */
+@media (max-width: 960px) {
+  .hv.hx { min-height: 100vh; min-height: 100lvh; }
+  .hv__stage { min-height: calc(100vh - var(--nav-h)); min-height: calc(100lvh - var(--nav-h)); }
+}
+@media (hover: none) {
+  .hv__ing { transition: none; translate: calc(var(--px) * var(--dep) * -70px) calc(var(--py) * var(--dep) * -54px); }
+}
+
+/* ==========================================================================
+   PAGE 1 — animation d'arrivée : mots du titre un par un, trait sous « Le goût qui rassemble »,
+   texte qui monte, pizza qui sort du bas en tournant, halo chaud « sortie du four » derrière la pizza
+   ========================================================================== */
+.hv__swash { display: block; width: clamp(130px, 13vw, 190px); height: auto; margin: -4px auto 6px; overflow: visible; }
+.hv__swash path { fill: none; stroke: #D9281C; stroke-width: 3; stroke-linecap: round; stroke-dasharray: 210; stroke-dashoffset: 210; }
+.is-loaded .hv__swash path { transition: stroke-dashoffset 1.1s cubic-bezier(.6, 0, .2, 1) .9s; stroke-dashoffset: 0; }
+.hv__w { display: inline-block; opacity: 0; transform: translateY(.55em) rotate(3deg); }
+.is-loaded .hv__w { animation: hvWord .85s cubic-bezier(.2, .9, .3, 1.25) forwards; animation-delay: calc(.15s + var(--i) * .13s); }
+@keyframes hvWord { to { opacity: 1; transform: none; } }
+.hv__hello, .hv__desc { opacity: 0; transform: translateY(14px); }
+.is-loaded .hv__hello { transition: opacity .7s ease, transform .8s var(--ease); opacity: 1; transform: none; }
+.is-loaded .hv__desc { transition: opacity .8s ease .75s, transform .9s var(--ease) .75s; opacity: 1; transform: none; }
+/* la pizza sort du bas en tournant */
+.hv__plate { opacity: 0; transform: translateY(38%) scale(.86) rotate(-120deg); }
+.is-loaded .hv__plate { transition: opacity .6s ease .35s, transform 1.5s cubic-bezier(.2, .85, .25, 1) .35s; opacity: 1; transform: none; }
+/* halo chaud qui respire derrière la pizza */
+.hv__dish::after { content: ""; position: absolute; z-index: -1; inset: -16%; border-radius: 50%; pointer-events: none;
+  background: radial-gradient(closest-side, rgba(255,150,60,.38), rgba(255,110,40,.14) 55%, transparent 72%);
+  animation: hvGlow 4.5s ease-in-out infinite; }
+@keyframes hvGlow { 0%, 100% { opacity: .55; transform: scale(.96); } 50% { opacity: 1; transform: scale(1.04); } }
+
+/* téléphone : le texte descend, posé juste au-dessus de la pizza ; les ingrédients remplissent le haut */
+@media (max-width: 960px) {
+  .hv__stage { display: flex; flex-direction: column; }
+  .hv__copy { margin-top: auto; padding-top: 0; padding-bottom: calc(var(--half, 48vw) + 22px); }
+  .hv__ing:nth-child(1) { --x: 16% !important; --y: 9% !important; }
+  .hv__ing:nth-child(2) { --x: 84% !important; --y: 8% !important; }
+  .hv__ing:nth-child(3) { --x: 50% !important; --y: 15% !important; }
+  .hv__ing:nth-child(4) { --x: 27% !important; --y: 25% !important; --r: -30deg !important; }
+  .hv__ing:nth-child(5) { --x: 74% !important; --y: 23% !important; }
+  .hv__ing:nth-child(6) { --x: 8% !important; --y: 36% !important; }
+  .hv__ing:nth-child(7) { --x: 92% !important; --y: 35% !important; }
+  .hv__ing:nth-child(8) { --x: 60% !important; --y: 31% !important; }
+  .hv__ing:nth-child(9) { display: block; --x: 6% !important; --y: 58% !important; }
+  .hv__ing:nth-child(10) { display: block; --x: 94% !important; --y: 57% !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hv__w, .hv__hello, .hv__desc, .hv__plate { opacity: 1; transform: none; animation: none; transition: none; }
+  .hv__swash path { stroke-dashoffset: 0; }
+  .hv__dish::after { animation: none; }
+}
+
+/* ==========================================================================
+   PAGE 1 — logo Hocine Chapati au-dessus de « Le goût qui rassemble » :
+   le portrait se dessine au trait rouge, puis le logo en couleurs apparaît (cercle qui s'ouvre) et le trait s'efface
+   ========================================================================== */
+.hv__logo { position: relative; width: clamp(92px, 9vw, 140px); aspect-ratio: 1; margin: 0 auto 8px; }
+.hv__logo-line, .hv__logo-img { position: absolute; inset: 0; width: 100%; height: 100%; }
+.hv__logo-line path { fill: none; stroke: #D9281C; stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 1; }
+.hv__logo-img { object-fit: contain; mix-blend-mode: multiply; opacity: 0; clip-path: circle(0% at 50% 45%); }
+.is-loaded .hv__logo-line path { animation: hvDraw 7s cubic-bezier(.4, 0, .4, 1) .1s forwards, hvLineOut .7s ease 7.4s forwards; }   /* dessin : 7 s */
+.is-loaded .hv__logo-img { animation: hvColor 1.2s cubic-bezier(.2, .8, .2, 1) 7.1s forwards; }   /* couleurs juste après */
+.is-loaded .hv__logo { animation: hvLogoPop .7s cubic-bezier(.3, 1.6, .5, 1) 7.8s; }
+@keyframes hvDraw { to { stroke-dashoffset: 0; } }
+@keyframes hvLineOut { to { opacity: 0; } }
+@keyframes hvColor { 0% { opacity: 0; clip-path: circle(0% at 50% 45%); } 30% { opacity: 1; } 100% { opacity: 1; clip-path: circle(75% at 50% 45%); } }
+@keyframes hvLogoPop { 0% { transform: scale(1); } 40% { transform: scale(1.1) rotate(-3deg); } 100% { transform: scale(1); } }
+@media (max-width: 960px) { .hv__logo { width: clamp(84px, 24vw, 112px); margin-bottom: 4px; } }
+@media (prefers-reduced-motion: reduce) {
+  .hv__logo-line { display: none; }
+  .hv__logo-img { opacity: 1; clip-path: none; animation: none !important; }
+}
+@media (max-width: 960px) { .hv__ing:nth-child(8) { --x: 13% !important; --y: 22% !important; } }
+/* logo un peu plus grand */
+.hv__logo { width: clamp(124px, 12vw, 184px); }
+@media (max-width: 960px) { .hv__logo { width: clamp(110px, 32vw, 150px); } }
+
+/* logo : le dessin est piloté par main.js (le crayon suit le trait) ; les couleurs arrivent quand le crayon a fini */
+.is-loaded .hv__logo .hv__logo-line path, .is-loaded .hv__logo .hv__logo-img, .is-loaded .hv__logo { animation: none; }
+.is-loaded .hv__logo.is-colored .hv__logo-img { animation: hvColor 1.2s cubic-bezier(.2, .8, .2, 1) forwards; }
+.is-loaded .hv__logo.is-colored .hv__logo-line path { animation: hvLineOut .7s ease .3s forwards; }
+.is-loaded .hv__logo.is-colored { animation: hvLogoPop .7s cubic-bezier(.3, 1.6, .5, 1) .7s; }
+/* le crayon : sa pointe est posée sur le point en train d'être dessiné */
+.hv__pencil { position: absolute; z-index: 3; left: 0; top: 0; width: 46px; height: 46px; margin: -44px 0 0 -2px; pointer-events: none; opacity: 0;
+  transition: opacity .3s ease, translate .7s cubic-bezier(.5, 0, .3, 1); filter: drop-shadow(2px 5px 4px rgba(26,18,16,.3)); }
+.hv__pencil svg { display: block; width: 100%; height: 100%; transform-origin: 4% 96%; animation: hvScribble .18s ease-in-out infinite alternate; }
+@keyframes hvScribble { from { transform: rotate(-4deg); } to { transform: rotate(3deg); } }
+.hv__logo.is-drawing .hv__pencil { opacity: 1; }
+.hv__logo.is-colored .hv__pencil { opacity: 0; translate: 60px -70px; }   /* il s'envole quand c'est fini */
+@media (max-width: 960px) { .hv__pencil { width: 38px; height: 38px; margin: -36px 0 0 -2px; } }
+@media (prefers-reduced-motion: reduce) { .hv__pencil { display: none; } }
+
+/* logo v3 : trait (CSS, 7 s) et crayon (chemin de mouvement CSS, mêmes 7 s, même vitesse) parfaitement synchronisés */
+.is-loaded .hv__logo .hv__logo-line path { animation: hvDraw 7s cubic-bezier(.45, 0, .55, 1) .2s forwards, hvLineOut .7s ease 7.5s forwards; }
+.is-loaded .hv__logo .hv__logo-img { animation: hvColor 1.2s cubic-bezier(.2, .8, .2, 1) 7.2s forwards; }
+.is-loaded .hv__logo { animation: hvLogoPop .7s cubic-bezier(.3, 1.6, .5, 1) 7.9s; }
+.hv__logo.is-colored, .hv__logo.is-drawing { animation: none; }
+/* piste à l'échelle du tracé (640 × 640), réduite à la taille du logo */
+.hv__pencil-track { position: absolute; z-index: 3; left: 0; top: 0; width: 640px; height: 640px; transform: scale(var(--k, .22)); transform-origin: 0 0; pointer-events: none; }
+.hv__pencil-track .hv__pencil { position: absolute; left: 0; top: 0; width: 46px; height: 46px; margin: 0; opacity: 0; translate: none; transition: none;
+  offset-rotate: 0deg; offset-anchor: 4% 96%; offset-distance: 0%;
+  transform: scale(calc(1 / var(--k, .22)));   /* le crayon garde sa taille réelle à l'écran */
+  transform-origin: 4% 96%; filter: drop-shadow(2px 5px 4px rgba(26,18,16,.3)); }
+.is-loaded .hv__pencil-track .hv__pencil { animation: hvPencilMove 7s cubic-bezier(.45, 0, .55, 1) .2s forwards, hvPencilShow 7.8s linear .2s forwards; }
+@keyframes hvPencilMove { from { offset-distance: 0%; } to { offset-distance: 100%; } }
+@keyframes hvPencilShow { 0% { opacity: 0; } 2% { opacity: 1; } 90% { opacity: 1; translate: 0 0; } 100% { opacity: 0; translate: 260px -300px; } }
+@media (max-width: 960px) { .hv__pencil-track .hv__pencil { width: 38px; height: 38px; } }
+@supports not (offset-path: path("M0 0")) { .hv__pencil-track { display: none; } }
+@media (prefers-reduced-motion: reduce) { .hv__pencil-track { display: none; } }
+.hv__logo-img { mix-blend-mode: normal; }   /* logo détouré (fond transparent) */
+
+/* crayon : après le logo, il écrit « Le goût qui rassemble » puis trace le trait rouge (main.js) */
+.is-loaded .hv__pencil-track .hv__pencil { animation: hvPencilMove 7s cubic-bezier(.45, 0, .55, 1) .2s forwards, hvPencilShow2 7s linear .2s forwards; }
+@keyframes hvPencilShow2 { 0% { opacity: 0; } 2% { opacity: 1; } 99.6% { opacity: 1; } 100% { opacity: 0; } }
+.hv__writer { position: absolute; z-index: 5; left: 0; top: 0; width: 46px; height: 46px; opacity: 0; pointer-events: none;
+  filter: drop-shadow(2px 5px 4px rgba(26,18,16,.3)); }
+@media (max-width: 960px) { .hv__writer { width: 38px; height: 38px; } }
+.hv__writer svg { display: block; width: 100%; height: 100%; transform-origin: 4% 96%; animation: hvScribble .18s ease-in-out infinite alternate; }
+/* avec le crayon : le texte et le trait attendent qu'il les écrive */
+.has-writer .hv__hello { opacity: 1; transform: none; transition: none; clip-path: inset(-40% 100% -40% 0); }
+.is-loaded .has-writer .hv__hello { opacity: 1; transform: none; }
+.has-writer .hv__swash path, .is-loaded .has-writer .hv__swash path { transition: none; stroke-dashoffset: 210; }
